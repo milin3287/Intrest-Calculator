@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { BrandLogo } from './common/BrandLogo';
 
 export const Footer: React.FC = () => {
-  const { navigateTo } = useApp();
+  const { navigateTo, theme, toggleTheme } = useApp();
 
   return (
     <footer className="w-full bg-surface-container-low shadow-[0_-1px_8px_rgba(15,23,42,0.03)] mt-space-3xl border-t border-surface-container-high/60 transition-colors">
@@ -184,9 +184,21 @@ export const Footer: React.FC = () => {
               Interestly provides quantitative mathematical simulations for informational, academic, and personal planning purposes. Computation algorithms assume uniform periodic accrual and do not constitute registered financial, investment, tax, or legal advice.
             </p>
           </div>
-          <span className="font-body-sm text-body-sm text-outline shrink-0">
-            &copy; {new Date().getFullYear()} Interestly Inc. All rights reserved.
-          </span>
+          <div className="flex items-center gap-4 shrink-0">
+            <button
+              onClick={toggleTheme}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container border border-outline-variant/40 text-on-surface text-xs font-medium hover:border-primary/40 transition-colors shadow-2xs"
+              title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+            >
+              <span className="material-symbols-outlined text-[16px] text-amber-500">
+                {theme === 'dark' ? 'dark_mode' : 'light_mode'}
+              </span>
+              <span>Theme: <strong className="capitalize">{theme}</strong></span>
+            </button>
+            <span className="font-body-sm text-body-sm text-outline">
+              &copy; {new Date().getFullYear()} MRP Interestly. All rights reserved.
+            </span>
+          </div>
         </div>
       </div>
     </footer>
