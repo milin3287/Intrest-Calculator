@@ -37,7 +37,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
       {!imgError && variant !== 'vector' ? (
         <div className="relative flex items-center justify-center rounded-lg overflow-hidden shrink-0 transition-transform duration-200 hover:scale-105">
           <img
-            src="/logo.png"
+            src={`${import.meta.env.BASE_URL}logo.png`}
             alt="MRP Logo"
             className={`${imgSizeMap[size]} object-contain rounded-lg drop-shadow-sm`}
             onError={() => setImgError(true)}

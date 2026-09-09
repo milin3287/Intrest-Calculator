@@ -1,8 +1,22 @@
-# Interestly — Financial Math & Interest Calculator
+# MRP Interestly — Financial Math & Precision Interest Calculator
 
 > **High-Precision Financial Calculation Infrastructure & Date-to-Date Cash Flow Ledger**
 
-Interestly is a modern, responsive web application engineered for financial mathematics, multi-tranche staggered cash flow accounting, loan amortization, investment projections, and audit-grade interest reporting. Built with React 19, TypeScript, and Tailwind CSS.
+MRP Interestly is a modern, responsive web application engineered for financial mathematics, multi-tranche staggered cash flow accounting, loan amortization, investment projections, and audit-grade interest reporting. Built with React 19, TypeScript, and Tailwind CSS.
+
+---
+
+## 🚀 How to Deploy on GitHub Pages
+
+This repository is pre-configured with a GitHub Actions workflow (`.github/workflows/deploy.yml`) and relative asset resolution (`base: './'`) for effortless GitHub Pages deployment:
+
+1. **Push this code to your GitHub repository** (on branch `main` or `master`).
+2. In your GitHub repository, navigate to:
+   **Settings** ➔ **Pages**
+3. Under **Build and deployment**:
+   - Change **Source** from *"Deploy from a branch"* to **"GitHub Actions"**.
+4. GitHub Actions will automatically run the build and publish your site at `https://<your-username>.github.io/<your-repo-name>/`!
+5. Any new push to `main` will automatically build and update your live website.
 
 ---
 

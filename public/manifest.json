@@ -1,10 +1,9 @@
 {
-  "id": "/",
-  "name": "MRP Interestly - Financial Math & Interest Calculator",
+  "name": "MRP Interestly - Financial Math & Precision Interest Calculator",
   "short_name": "MRP Interestly",
-  "description": "High-precision financial math calculator for custom date cash flows, running interest ledgers, compound interest, and loans.",
-  "start_url": "/",
-  "scope": "/",
+  "description": "High-precision financial calculation infrastructure for compound interest, custom date-to-date cash flow ledgers with staggered inflows and withdrawals, debt amortization, and investment growth.",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
   "theme_color": "#004ac6",
@@ -12,19 +11,19 @@
   "categories": ["finance", "utilities", "productivity", "business"],
   "icons": [
     {
-      "src": "/pwa-192x192.png",
+      "src": "./pwa-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/pwa-512x512.png",
+      "src": "./pwa-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/pwa-maskable-512x512.png",
+      "src": "./pwa-maskable-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

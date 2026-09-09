@@ -6,6 +6,7 @@ import {VitePWA} from 'vite-plugin-pwa';
 
 export default defineConfig(() => {
   return {
+    base: './',
     plugins: [
       react(),
       tailwindcss(),
@@ -13,15 +14,14 @@ export default defineConfig(() => {
         registerType: 'autoUpdate',
         includeAssets: ['icon.svg', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png', 'manifest.json'],
         manifest: {
-          id: '/',
           name: 'MRP Interestly - Financial Math & Precision Interest Calculator',
           short_name: 'MRP Interestly',
           description: 'High-precision financial calculation infrastructure for compound interest, custom date-to-date cash flow ledgers with staggered inflows and withdrawals, debt amortization, and investment growth.',
           theme_color: '#004ac6',
           background_color: '#ffffff',
           display: 'standalone',
-          start_url: '/',
-          scope: '/',
+          start_url: './',
+          scope: './',
           icons: [
             {
               src: '/pwa-192x192.png',
