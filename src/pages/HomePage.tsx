@@ -3,22 +3,17 @@ import gsap from 'gsap';
 import { useApp } from '../context/AppContext';
 import { ThreeDCanvas } from '../components/landing/ThreeDCanvas';
 import { GsapTicker } from '../components/landing/GsapTicker';
-import { GsapCounter } from '../components/landing/GsapCounter';
-import { InteractiveSimulator } from '../components/landing/InteractiveSimulator';
-import { BentoGrid } from '../components/landing/BentoGrid';
-import { InteractiveShowcase } from '../components/landing/InteractiveShowcase';
-import { LandingFaq } from '../components/landing/LandingFaq';
 import { SpotlightCard } from '../components/landing/SpotlightCard';
 import { ParticleField } from '../components/landing/ParticleField';
+import { InteractiveDateDemo } from '../components/landing/InteractiveDateDemo';
 
 export const HomePage: React.FC = () => {
-  const { navigateTo } = useApp();
-  const heroRef = useRef<HTMLDivElement>(null);
+  const { navigateTo, formatMoney } = useApp();
   const headlineRef = useRef<HTMLHeadingElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
   const subtextRef = useRef<HTMLParagraphElement>(null);
   const ctaGroupRef = useRef<HTMLDivElement>(null);
-  const statsGroupRef = useRef<HTMLDivElement>(null);
+  const featureSectionRef = useRef<HTMLDivElement>(null);
 
   // GSAP Entrance Animations
   useEffect(() => {
@@ -27,322 +22,381 @@ export const HomePage: React.FC = () => {
 
       tl.fromTo(
         badgeRef.current,
-        { y: -20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6 }
+        { y: -16, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5 }
       )
         .fromTo(
           headlineRef.current,
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8 },
+          { y: 24, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7 },
           '-=0.3'
         )
         .fromTo(
           subtextRef.current,
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.7 },
+          { y: 16, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6 },
           '-=0.4'
         )
         .fromTo(
           ctaGroupRef.current,
-          { y: 20, opacity: 0, scale: 0.96 },
-          { y: 0, opacity: 1, scale: 1, duration: 0.6 },
-          '-=0.4'
-        )
-        .fromTo(
-          statsGroupRef.current,
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6 },
+          { y: 16, opacity: 0, scale: 0.98 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.5 },
           '-=0.3'
         );
-    }, heroRef);
+    });
 
     return () => ctx.revert();
   }, []);
 
-  const tickerItems = [
-    { title: 'Custom Date Ledger', tag: 'Staggered Cash Flows', icon: 'calendar_month' },
-    { title: 'Exact Day Count', tag: '365 / 360 ISO', icon: 'schedule' },
-    { title: 'Compound Interest', tag: 'Multi-Frequency', icon: 'trending_up' },
-    { title: 'Loan EMI Prepayments', tag: 'Tenure Slasher', icon: 'account_balance' },
-    { title: 'Vector PDF Statements', tag: 'Audit Grade', icon: 'picture_as_pdf' },
-    { title: 'Wealth Multiplier', tag: 'SIP & Lumpsum', icon: 'rocket_launch' },
-    { title: 'Indian Lakh/Crore Words', tag: 'Invoice Ready', icon: 'format_quote' },
-    { title: 'ISO 31-11 Quantitative Solver', tag: 'Algebraic Proofs', icon: 'functions' },
-  ];
-
   return (
-    <div ref={heroRef} className="flex flex-col w-full overflow-hidden">
+    <div className="relative min-h-screen bg-surface text-on-surface overflow-hidden">
       {/* Constellation Particle Field */}
       <div className="relative w-full">
-        <ParticleField particleCount={40} />
-        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[400px] bg-gradient-to-b from-primary/20 via-tertiary/15 to-transparent blur-3xl pointer-events-none -z-10" />
+        <ParticleField particleCount={35} />
 
-        {/* HERO SECTION */}
-        <section className="w-full pt-4 pb-12 lg:pt-8 lg:pb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            {/* Left Hero Column */}
-            <div className="lg:col-span-7 flex flex-col items-start gap-5">
-              {/* Badge */}
+        {/* Ambient Glow Orbs */}
+        <div className="absolute top-[-150px] left-1/2 -translate-x-1/2 w-[650px] h-[380px] bg-gradient-to-tr from-primary/15 via-tertiary/10 to-transparent blur-[120px] pointer-events-none -z-10" />
+        <div className="absolute top-[400px] right-[-100px] w-[450px] h-[450px] bg-secondary/10 blur-[130px] pointer-events-none -z-10" />
+
+        {/* --- Hero Section --- */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+            {/* Hero Left: Punchy, High-Clarity Value Prop */}
+            <div className="lg:col-span-7 space-y-6 text-left">
               <div
                 ref={badgeRef}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-high/80 border border-outline-variant/30 shadow-xs backdrop-blur-sm"
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-container-high/80 border border-outline-variant/30 backdrop-blur-md shadow-xs"
               >
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-primary text-on-primary text-[11px] font-bold">
-                  <span className="material-symbols-outlined text-[13px]">bolt</span>
-                </span>
-                <span className="text-xs font-semibold tracking-wide text-on-surface">
-                  Next-Gen Quantitative Financial Engine &bull; React 19 + GSAP
+                <img src="/logo.png" alt="MRP Logo" className="w-5 h-5 object-contain rounded" referrerPolicy="no-referrer" />
+                <span className="text-xs font-mono font-semibold tracking-wide uppercase text-on-surface-variant">
+                  MRP Engine • Exact-Day Financial Math
                 </span>
               </div>
 
-              {/* Main Display Headline */}
               <h1
                 ref={headlineRef}
-                className="font-display-xl text-4xl sm:text-5xl lg:text-6xl tracking-tight text-on-surface font-extrabold leading-[1.1]"
+                className="font-display-xl text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-on-surface leading-[1.12]"
               >
-                Exact Financial Math.<br />
-                <span className="bg-gradient-to-r from-primary via-primary-container to-tertiary bg-clip-text text-transparent">
-                  Zero Assumptions.
-                </span>
+                Calculate Interest Between Any Dates.
               </h1>
 
-              {/* Subheading */}
               <p
                 ref={subtextRef}
-                className="font-body-lg text-base sm:text-lg text-on-surface-variant max-w-xl leading-relaxed"
+                className="text-base sm:text-lg text-on-surface-variant leading-relaxed max-w-xl"
               >
-                From staggered, multi-tranche date cash flows and daily accruals to loan prepayment simulations and audit-grade vector PDF statements — engineered for absolute precision.
+                No rough 30-day rounding. Record irregular deposits, withdrawals, and prepayments with exact calendar day counts, daily accruals, and audit-grade PDF statements.
               </p>
 
               {/* Action Buttons */}
-              <div ref={ctaGroupRef} className="flex flex-wrap items-center gap-3 pt-2 w-full sm:w-auto">
+              <div
+                ref={ctaGroupRef}
+                className="flex flex-wrap items-center gap-3 pt-1"
+              >
                 <button
                   type="button"
                   onClick={() => navigateTo('date-ledger')}
-                  className="relative group overflow-hidden px-6 py-3.5 rounded-xl bg-primary text-on-primary font-semibold text-sm shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2.5"
+                  className="px-6 py-3 rounded-xl bg-primary text-on-primary font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
                 >
-                  {/* Subtle Shimmer Light Sweep */}
-                  <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                  <span className="material-symbols-outlined text-lg">calendar_month</span>
-                  <span>Launch Date Ledger</span>
-                  <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">
-                    arrow_forward
-                  </span>
+                  <span className="material-symbols-outlined text-base">account_balance_wallet</span>
+                  <span>Open Date Ledger</span>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => navigateTo('calculators')}
-                  className="px-5 py-3.5 rounded-xl bg-surface-container-high/70 hover:bg-surface-container-highest border border-outline-variant/30 text-on-surface font-semibold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                  onClick={() => navigateTo('compound')}
+                  className="px-6 py-3 rounded-xl bg-surface-container-high text-on-surface font-semibold text-sm border border-outline-variant/40 hover:bg-surface-container-highest hover:border-primary/40 active:scale-[0.98] transition-all flex items-center gap-2"
                 >
-                  <span className="material-symbols-outlined text-lg text-primary">calculate</span>
-                  <span>Explore Calculators</span>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => navigateTo('advanced-solver')}
-                  className="px-4 py-3.5 rounded-xl hover:bg-surface-container-high/50 text-secondary text-sm font-semibold transition-colors flex items-center justify-center gap-1.5"
-                >
-                  <span className="material-symbols-outlined text-base">functions</span>
-                  <span>ISO Math Solver</span>
+                  <span className="material-symbols-outlined text-base text-tertiary">trending_up</span>
+                  <span>Compound Visualizer</span>
                 </button>
               </div>
 
-              {/* Live Quantitative Stats HUD */}
-              <div
-                ref={statsGroupRef}
-                className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4 w-full max-w-xl"
-              >
-                <div className="p-3 rounded-xl bg-surface-container-low/80 border border-outline-variant/20">
-                  <div className="font-mono text-xl sm:text-2xl font-extrabold text-on-surface">
-                    <GsapCounter value={99.999} decimals={3} suffix="%" />
-                  </div>
-                  <div className="text-[11px] font-medium text-secondary mt-0.5">Calculation Precision</div>
+              {/* 3 Quick Proof Points */}
+              <div className="pt-3 grid grid-cols-3 gap-3 border-t border-outline-variant/20 max-w-lg text-xs text-secondary font-medium">
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>
+                  <span>ACT/365 & 360</span>
                 </div>
-
-                <div className="p-3 rounded-xl bg-surface-container-low/80 border border-outline-variant/20">
-                  <div className="font-mono text-xl sm:text-2xl font-extrabold text-primary">
-                    <GsapCounter value={365} suffix="/360" />
-                  </div>
-                  <div className="text-[11px] font-medium text-secondary mt-0.5">Day Count Standards</div>
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>
+                  <span>Staggered Cash</span>
                 </div>
-
-                <div className="p-3 rounded-xl bg-surface-container-low/80 border border-outline-variant/20">
-                  <div className="font-mono text-xl sm:text-2xl font-extrabold text-tertiary">
-                    <GsapCounter value={100} prefix="₹" suffix="Cr+" />
-                  </div>
-                  <div className="text-[11px] font-medium text-secondary mt-0.5">Simulation Capacity</div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-surface-container-low/80 border border-outline-variant/20">
-                  <div className="font-mono text-xl sm:text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                    &lt; 1ms
-                  </div>
-                  <div className="text-[11px] font-medium text-secondary mt-0.5">Instant Calculation</div>
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-emerald-500 text-sm">check_circle</span>
+                  <span>Vector PDF Print</span>
                 </div>
               </div>
             </div>
 
-            {/* Right: Interactive 3D Canvas Scene */}
+            {/* Hero Right: Interactive 3D Canvas */}
             <div className="lg:col-span-5 relative flex items-center justify-center">
-              <div className="w-full aspect-square max-w-[480px] relative">
-                {/* 3D WebGL Canvas */}
-                <ThreeDCanvas />
-
-                {/* Floating 3D Badge 1: Top Right */}
-                <div className="absolute top-4 right-0 sm:-right-4 p-3 rounded-xl bg-surface-container-lowest/90 border border-outline-variant/40 shadow-xl backdrop-blur-md flex items-center gap-2.5 animate-bounce [animation-duration:4s]">
-                  <span className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse" />
-                  <div className="text-left">
-                    <span className="block text-[10px] uppercase tracking-wider font-bold text-secondary">
-                      Active Ledger Engine
-                    </span>
-                    <span className="font-mono font-bold text-xs text-on-surface">365-Day Exact Interval</span>
-                  </div>
-                </div>
-
-                {/* Floating 3D Badge 2: Bottom Left */}
-                <div className="absolute bottom-6 left-0 sm:-left-4 p-3 rounded-xl bg-surface-container-lowest/90 border border-outline-variant/40 shadow-xl backdrop-blur-md flex items-center gap-2.5">
-                  <span className="p-1.5 rounded-lg bg-primary/10 text-primary">
-                    <span className="material-symbols-outlined text-base">picture_as_pdf</span>
-                  </span>
-                  <div className="text-left">
-                    <span className="block text-[10px] uppercase tracking-wider font-bold text-secondary">
-                      Vector PDF Export
-                    </span>
-                    <span className="font-mono font-bold text-xs text-on-surface">Instant Audit Reports</span>
-                  </div>
-                </div>
+              <div className="w-full aspect-square max-w-[440px] relative rounded-3xl bg-gradient-to-b from-surface-container-high/40 via-surface-container-lowest/30 to-surface-container-high/20 border border-outline-variant/30 backdrop-blur-md shadow-2xl p-4 overflow-hidden">
+                <ThreeDCanvas growthFactor={1.4} interactive={true} />
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </div>
 
-        {/* GSAP INFINITE TICKER */}
-        <GsapTicker items={tickerItems} speed={32} />
+      {/* Infinite Marquee Ticker */}
+      <div className="py-2 bg-surface-container-low/40 border-y border-outline-variant/20">
+        <GsapTicker />
+      </div>
 
-        {/* INTERACTIVE SIMULATOR (LIVE PLAYGROUND) */}
-        <section className="w-full py-12">
-          <InteractiveSimulator />
-        </section>
+      {/* --- Section 1: The 3-Second Live Calculation Demo --- */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="text-center max-w-2xl mx-auto mb-8 space-y-2">
+          <span className="text-xs font-mono font-bold text-primary uppercase tracking-wider">
+            Interactive Playground
+          </span>
+          <h2 className="font-display-xl text-2xl sm:text-3xl font-extrabold text-on-surface">
+            Experience the Exact-Day Difference
+          </h2>
+          <p className="text-xs sm:text-sm text-on-surface-variant">
+            Adjust the dates or principal below. Watch the exact days and daily interest calculate in real time.
+          </p>
+        </div>
 
-        {/* BENTO GRID (21st.dev Style Architecture) */}
-        <BentoGrid />
+        <InteractiveDateDemo />
+      </div>
 
-        {/* INTERACTIVE FEATURE SHOWCASE */}
-        <InteractiveShowcase />
+      {/* --- Section 2: Three Core Pillars (Visual & Intuitive) --- */}
+      <div ref={featureSectionRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+          <span className="text-xs font-mono font-bold text-tertiary uppercase tracking-wider">
+            Engine Architecture
+          </span>
+          <h2 className="font-display-xl text-2xl sm:text-3xl font-extrabold text-on-surface">
+            Everything You Need, Nothing You Don't
+          </h2>
+          <p className="text-xs sm:text-sm text-on-surface-variant">
+            Three dedicated calculation modes built for borrowers, lenders, and investors.
+          </p>
+        </div>
 
-        {/* COMPARISON MATRIX (TRADITIONAL VS INTERESTLY) */}
-        <section className="w-full py-12">
-          <div className="text-center max-w-2xl mx-auto mb-10">
-            <span className="text-xs font-mono font-bold tracking-wider text-primary uppercase bg-primary/10 px-3 py-1 rounded-full">
-              Why Interestly
-            </span>
-            <h2 className="font-display-xl text-3xl sm:text-4xl font-extrabold text-on-surface tracking-tight mt-2">
-              Beyond Basic Static Calculators
-            </h2>
-            <p className="text-body-md text-on-surface-variant mt-2">
-              Comparing legacy financial calculation tools against Interestly&apos;s dynamic multi-tranche ledger system.
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto overflow-hidden rounded-2xl border border-outline-variant/30 bg-surface-container-lowest shadow-sm">
-            <div className="grid grid-cols-12 bg-surface-container-high/60 p-4 border-b border-outline-variant/20 font-bold text-xs sm:text-sm text-on-surface">
-              <span className="col-span-5 sm:col-span-6">CAPABILITY</span>
-              <span className="col-span-3 text-secondary">LEGACY TOOLS</span>
-              <span className="col-span-4 sm:col-span-3 text-primary">INTERESTLY</span>
-            </div>
-            {[
-              {
-                feature: 'Exact Date Accounting',
-                legacy: '30-day fixed months only',
-                interestly: 'Exact calendar days (ACT/365 & 360)',
-              },
-              {
-                feature: 'Staggered Cash Flows',
-                legacy: 'Single lump sum or flat EMI',
-                interestly: 'Unlimited staggered deposits & debits',
-              },
-              {
-                feature: 'Day-by-Day Passbook',
-                legacy: 'Unavailable',
-                interestly: 'Real-time running balances & period interest',
-              },
-              {
-                feature: 'Audit-Grade PDF Statements',
-                legacy: 'Generic screenshot or raw CSV',
-                interestly: 'Formatted vector PDF with Lakh/Crore words',
-              },
-              {
-                feature: 'Loan Prepayment Simulation',
-                legacy: 'Static amortizations',
-                interestly: 'Dynamic tenure cuts and interest elimination',
-              },
-              {
-                feature: 'Offline & Privacy',
-                legacy: 'Ad-heavy or server-reliant',
-                interestly: '100% Client-side local encrypted storage',
-              },
-            ].map((row, idx) => (
-              <div
-                key={idx}
-                className="grid grid-cols-12 p-4 border-b border-outline-variant/10 text-xs sm:text-sm items-center hover:bg-surface-container-low/40 transition-colors"
-              >
-                <span className="col-span-5 sm:col-span-6 font-semibold text-on-surface">
-                  {row.feature}
-                </span>
-                <span className="col-span-3 text-secondary font-medium text-xs">
-                  {row.legacy}
-                </span>
-                <span className="col-span-4 sm:col-span-3 font-bold text-primary flex items-center gap-1.5 text-xs sm:text-sm">
-                  <span className="material-symbols-outlined text-primary text-base">check_circle</span>
-                  <span>{row.interestly}</span>
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* FREQUENTLY ASKED QUESTIONS */}
-        <LandingFaq />
-
-        {/* BOTTOM CALL TO ACTION BANNER */}
-        <section className="w-full py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card 1: Passbook Ledger */}
           <SpotlightCard
-            className="p-8 sm:p-12 text-center relative overflow-hidden bg-gradient-to-br from-primary/10 via-tertiary/10 to-surface-container-high/60 border border-primary/30"
-            spotlightColor="rgba(37, 99, 235, 0.25)"
+            className="p-6 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest/80 backdrop-blur-md flex flex-col justify-between hover:border-primary/40 transition-all group"
+            spotlightColor="rgba(37, 99, 235, 0.15)"
           >
-            <div className="max-w-2xl mx-auto space-y-4">
-              <span className="px-3.5 py-1 rounded-full text-xs font-mono font-bold bg-primary text-on-primary">
-                100% Free &bull; Private &bull; Offline Capable
-              </span>
-              <h2 className="font-display-xl text-3xl sm:text-4xl font-extrabold text-on-surface tracking-tight">
-                Ready for Deterministic Financial Precision?
-              </h2>
-              <p className="text-body-md text-on-surface-variant max-w-lg mx-auto">
-                Track your date-to-date money flows, simulate loan prepayments, and generate audit-grade PDF statements instantly.
-              </p>
-              <div className="flex flex-wrap justify-center gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => navigateTo('date-ledger')}
-                  className="px-6 py-3.5 rounded-xl bg-primary text-on-primary font-bold text-sm shadow-lg shadow-primary/30 hover:bg-primary/90 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-                >
-                  <span className="material-symbols-outlined text-lg">calendar_month</span>
-                  <span>Start With Custom Dates Ledger</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigateTo('calculators')}
-                  className="px-6 py-3.5 rounded-xl bg-surface-container-lowest text-on-surface border border-outline-variant/30 font-bold text-sm hover:bg-surface-container-high hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-                >
-                  <span className="material-symbols-outlined text-lg text-primary">calculate</span>
-                  <span>Open Core Calculators</span>
-                </button>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="p-2.5 rounded-xl bg-blue-500/10 text-primary">
+                  <span className="material-symbols-outlined text-xl">account_balance_wallet</span>
+                </span>
+                <span className="text-[11px] font-mono font-bold text-secondary">01 / LEDGER</span>
               </div>
+
+              <div>
+                <h3 className="font-bold text-base sm:text-lg text-on-surface group-hover:text-primary transition-colors">
+                  Date-to-Date Passbook
+                </h3>
+                <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Add multiple deposits and partial repayments on custom dates. Computes running daily balances with zero guesswork.
+                </p>
+              </div>
+
+              {/* Visual Micro-Preview */}
+              <div className="p-3 rounded-xl bg-surface-container-high/60 border border-outline-variant/20 font-mono text-[11px] space-y-1.5">
+                <div className="flex justify-between text-secondary">
+                  <span>15 Jan &rarr; 28 Mar</span>
+                  <span className="text-primary font-semibold">72 Days</span>
+                </div>
+                <div className="flex justify-between font-bold text-on-surface">
+                  <span>Partial Debit:</span>
+                  <span className="text-rose-500">-₹25,000</span>
+                </div>
+                <div className="flex justify-between text-secondary">
+                  <span>Net Balance:</span>
+                  <span className="text-emerald-500 font-bold">₹75,000</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-5 mt-4 border-t border-outline-variant/20">
+              <button
+                type="button"
+                onClick={() => navigateTo('date-ledger')}
+                className="w-full py-2 px-3 rounded-lg bg-surface-container-high text-on-surface text-xs font-bold hover:bg-primary hover:text-on-primary transition-all flex items-center justify-center gap-1"
+              >
+                <span>Launch Ledger</span>
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </button>
             </div>
           </SpotlightCard>
-        </section>
+
+          {/* Card 2: Compounding Visualizer */}
+          <SpotlightCard
+            className="p-6 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest/80 backdrop-blur-md flex flex-col justify-between hover:border-tertiary/40 transition-all group"
+            spotlightColor="rgba(147, 51, 234, 0.15)"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="p-2.5 rounded-xl bg-purple-500/10 text-tertiary">
+                  <span className="material-symbols-outlined text-xl">trending_up</span>
+                </span>
+                <span className="text-[11px] font-mono font-bold text-secondary">02 / MULTIPLIER</span>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-base sm:text-lg text-on-surface group-hover:text-tertiary transition-colors">
+                  Compounding Matrix
+                </h3>
+                <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  Compare annual, quarterly, monthly, and continuous compounding frequencies side-by-side with step-by-step math.
+                </p>
+              </div>
+
+              {/* Visual Micro-Preview */}
+              <div className="p-3 rounded-xl bg-surface-container-high/60 border border-outline-variant/20 font-mono text-[11px] space-y-1.5">
+                <div className="flex justify-between text-secondary">
+                  <span>Annual Compound:</span>
+                  <span className="text-on-surface font-semibold">₹1,61,051</span>
+                </div>
+                <div className="flex justify-between text-secondary">
+                  <span>Monthly Compound:</span>
+                  <span className="text-on-surface font-semibold">₹1,64,530</span>
+                </div>
+                <div className="flex justify-between font-bold text-tertiary">
+                  <span>Continuous e^(rt):</span>
+                  <span className="font-bold text-tertiary">₹1,64,872</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-5 mt-4 border-t border-outline-variant/20">
+              <button
+                type="button"
+                onClick={() => navigateTo('compound')}
+                className="w-full py-2 px-3 rounded-lg bg-surface-container-high text-on-surface text-xs font-bold hover:bg-tertiary hover:text-on-primary transition-all flex items-center justify-center gap-1"
+              >
+                <span>Compare Frequencies</span>
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </button>
+            </div>
+          </SpotlightCard>
+
+          {/* Card 3: Loan Tenure Slasher */}
+          <SpotlightCard
+            className="p-6 rounded-2xl border border-outline-variant/30 bg-surface-container-lowest/80 backdrop-blur-md flex flex-col justify-between hover:border-emerald-500/40 transition-all group"
+            spotlightColor="rgba(16, 185, 129, 0.15)"
+          >
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-500">
+                  <span className="material-symbols-outlined text-xl">content_cut</span>
+                </span>
+                <span className="text-[11px] font-mono font-bold text-secondary">03 / PREPAYMENTS</span>
+              </div>
+
+              <div>
+                <h3 className="font-bold text-base sm:text-lg text-on-surface group-hover:text-emerald-500 transition-colors">
+                  Loan Tenure Slasher
+                </h3>
+                <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
+                  See how small extra monthly prepayments or annual lump sums eliminate years of interest and cut loan tenure in half.
+                </p>
+              </div>
+
+              {/* Visual Micro-Preview */}
+              <div className="p-3 rounded-xl bg-surface-container-high/60 border border-outline-variant/20 font-mono text-[11px] space-y-1.5">
+                <div className="flex justify-between text-secondary">
+                  <span>Standard 20 Yr Loan:</span>
+                  <span className="text-on-surface font-semibold">240 Months</span>
+                </div>
+                <div className="flex justify-between font-bold text-emerald-600 dark:text-emerald-400">
+                  <span>+₹5,000/mo Prepay:</span>
+                  <span>168 Months</span>
+                </div>
+                <div className="flex justify-between text-secondary font-bold">
+                  <span>Interest Saved:</span>
+                  <span className="text-emerald-500">₹8.4 Lakhs</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-5 mt-4 border-t border-outline-variant/20">
+              <button
+                type="button"
+                onClick={() => navigateTo('loan')}
+                className="w-full py-2 px-3 rounded-lg bg-surface-container-high text-on-surface text-xs font-bold hover:bg-emerald-600 hover:text-white transition-all flex items-center justify-center gap-1"
+              >
+                <span>Slash Loan Tenure</span>
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </button>
+            </div>
+          </SpotlightCard>
+        </div>
+      </div>
+
+      {/* --- Section 3: Audit-Ready Statement Export & Indian Words Preview --- */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <SpotlightCard
+          className="p-6 sm:p-8 rounded-3xl border border-outline-variant/30 bg-gradient-to-r from-surface-container-high/40 via-surface-container-lowest/70 to-surface-container-high/40 backdrop-blur-xl shadow-xl"
+          spotlightColor="rgba(59, 130, 246, 0.12)"
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 text-left">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-[11px] font-mono font-bold">
+                <span className="material-symbols-outlined text-xs">picture_as_pdf</span>
+                Instant Vector PDF & Words
+              </div>
+              <h3 className="font-display-xl text-xl sm:text-2xl font-bold text-on-surface">
+                Ready for Formal Accounting & Legal Audits
+              </h3>
+              <p className="text-xs sm:text-sm text-on-surface-variant max-w-xl">
+                Every calculation exports to crisp vector PDF with formal party metadata, itemized ledger entries, and amounts spelled out in Indian words (<span className="font-mono text-on-surface font-semibold">Rupees One Lakh Twenty-Five Thousand Only</span>).
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => navigateTo('date-ledger')}
+                className="px-5 py-2.5 rounded-xl bg-primary text-on-primary font-bold text-xs hover:bg-primary/90 transition-all shadow-md flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">description</span>
+                <span>Generate Passbook</span>
+              </button>
+            </div>
+          </div>
+        </SpotlightCard>
+      </div>
+
+      {/* --- Bottom Clean Launch Banner --- */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+        <div className="p-8 sm:p-12 rounded-3xl bg-gradient-to-b from-surface-container-high/80 to-surface-container-lowest/90 border border-primary/25 shadow-2xl relative overflow-hidden space-y-5">
+          <div className="absolute -right-16 -top-16 w-60 h-60 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-16 -bottom-16 w-60 h-60 bg-tertiary/15 rounded-full blur-3xl pointer-events-none" />
+
+          <h2 className="font-display-xl text-2xl sm:text-3xl lg:text-4xl font-extrabold text-on-surface tracking-tight">
+            Stop Guessing. Start Calculating Exact Dates.
+          </h2>
+
+          <p className="text-xs sm:text-sm text-on-surface-variant max-w-lg mx-auto leading-relaxed">
+            Whether settling personal loans, managing promissory notes, or tracking investment yields, Interestly handles the math with mathematical certainty.
+          </p>
+
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => navigateTo('date-ledger')}
+              className="px-6 py-3 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm shadow-xl shadow-primary/25 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
+            >
+              <span>Launch Passbook Ledger</span>
+              <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigateTo('simple')}
+              className="px-6 py-3 rounded-xl bg-surface-container-high text-on-surface font-semibold text-xs sm:text-sm border border-outline-variant/30 hover:bg-surface-container-highest transition-all"
+            >
+              View All Calculators
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

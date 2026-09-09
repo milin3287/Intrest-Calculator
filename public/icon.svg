@@ -1,38 +1,62 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#004ac6" />
-      <stop offset="50%" stop-color="#2563eb" />
-      <stop offset="100%" stop-color="#4f46e5" />
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f8fafc" />
     </linearGradient>
-    <filter id="softGlow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#004ac6" flood-opacity="0.35" />
+    <linearGradient id="mrp-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+    <linearGradient id="mrp-navy" x1="0%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#1e40af" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="mrp-swoosh" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <linearGradient id="mrp-teal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="60%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <filter id="mrpShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="12" flood-color="#0284c7" flood-opacity="0.25" />
     </filter>
   </defs>
-  
-  <!-- Base Background Squircle -->
-  <rect width="512" height="512" rx="112" fill="url(#brandGrad)" />
-  
-  <!-- Calendar and Interest Graphic -->
-  <g transform="translate(64, 64)" filter="url(#softGlow)">
-    <!-- Calendar Body -->
-    <rect x="32" y="56" width="320" height="272" rx="36" fill="#ffffff" />
-    <!-- Calendar Top Bar Header -->
-    <path d="M32 92 C32 72 48 56 68 56 L316 56 C336 56 352 72 352 92 L352 120 L32 120 Z" fill="#003592" />
-    
-    <!-- Calendar Binder Rings -->
-    <rect x="96" y="32" width="24" height="48" rx="12" fill="#93c5fd" />
-    <rect x="264" y="32" width="24" height="48" rx="12" fill="#93c5fd" />
-    
-    <!-- Percent / Growth / Coin Emblem -->
-    <!-- Top-left circle of % -->
-    <circle cx="132" cy="188" r="22" fill="#004ac6" />
-    <!-- Diagonal Slash of % -->
-    <line x1="252" y1="168" x2="132" y2="288" stroke="#004ac6" stroke-width="26" stroke-linecap="round" />
-    <!-- Bottom-right circle of % -->
-    <circle cx="252" cy="268" r="22" fill="#004ac6" />
-    
-    <!-- Sparkle / Star in top-right -->
-    <path d="M300 170 Q300 195 325 195 Q300 195 300 220 Q300 195 275 195 Q300 195 300 170 Z" fill="#f59e0b" />
+
+  <!-- Clean Background Squircle -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)" stroke="#e2e8f0" stroke-width="8" />
+
+  <!-- MRP Monogram Logo -->
+  <g transform="translate(68, 140) scale(0.95)" filter="url(#mrpShadow)">
+    <!-- Letter M -->
+    <path
+      d="M20 200V40L80 120L140 40V200H100V105L80 135L60 105V200H20Z"
+      fill="url(#mrp-blue)"
+    />
+
+    <!-- Letter R -->
+    <path
+      d="M140 40H220C245 40 265 55 265 80C265 105 245 120 220 120H180V200H140V40ZM180 75V90H215C225 90 230 85 230 80C230 75 225 70 215 70H180V75Z"
+      fill="url(#mrp-navy)"
+    />
+    <path
+      d="M185 120L250 200H205L155 135H185L185 120Z"
+      fill="url(#mrp-blue)"
+    />
+
+    <!-- Dynamic Swoosh -->
+    <path
+      d="M100 200C135 170 185 130 250 120C210 135 160 175 100 200Z"
+      fill="url(#mrp-swoosh)"
+    />
+
+    <!-- Letter P -->
+    <path
+      d="M245 40H325C355 40 380 60 380 90C380 120 355 140 325 140H285V200H245V40ZM285 75V105H320C335 105 345 98 345 90C345 82 335 75 320 75H285Z"
+      fill="url(#mrp-teal)"
+    />
   </g>
 </svg>

@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Interestly - Financial Math & Interest Calculator",
-  "short_name": "Interestly",
+  "name": "MRP Interestly - Financial Math & Interest Calculator",
+  "short_name": "MRP Interestly",
   "description": "High-precision financial math calculator for custom date cash flows, running interest ledgers, compound interest, and loans.",
   "start_url": "/",
   "scope": "/",

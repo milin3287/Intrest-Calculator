@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { BrandLogo } from './common/BrandLogo';
 
 export const Footer: React.FC = () => {
   const { navigateTo } = useApp();
@@ -10,10 +11,8 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-space-xl pb-space-2xl">
           {/* Brand Info */}
           <div className="lg:col-span-2 flex flex-col gap-space-sm">
-            <div className="flex items-center gap-space-xs">
-              <span className="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">
-                Interestly
-              </span>
+            <div className="flex items-center gap-3">
+              <BrandLogo size="md" showText={true} />
               <span className="font-label-sm text-label-sm uppercase px-space-xs py-space-2xs rounded-full bg-secondary-container text-on-secondary-container font-semibold">
                 Fintech Engine
               </span>

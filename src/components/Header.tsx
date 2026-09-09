@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useApp } from '../context/AppContext';
 import { PagePath, CurrencyCode } from '../types';
 import { PWAInstallButton } from './PWAInstallButton';
+import { BrandLogo } from './common/BrandLogo';
 
 export const Header: React.FC = () => {
   const { currentPath, navigateTo, currency, setCurrency, theme, toggleTheme, history } = useApp();
-  const [imgError, setImgError] = useState(false);
 
   const navItems: { label: string; path: PagePath }[] = [
     { label: 'Home', path: 'home' },
@@ -29,25 +29,9 @@ export const Header: React.FC = () => {
           <button
             onClick={() => navigateTo('home')}
             className="flex items-center gap-2 hover:opacity-90 transition-opacity focus:outline-none"
-            aria-label="Interestly Home"
+            aria-label="MRP Interestly Home"
           >
-            {!imgError ? (
-              <img
-                alt="Interestly Logo"
-                className="h-8 w-auto object-contain"
-                src="https://lh3.googleusercontent.com/aida/AEtjO1WFZ1KiSOChLZ2SYaLfQnCaBH2eAak35qPran7P5Vta-KIzDpX8ICjkguOU_BaqZhA-bZyrT3_Gput_64frwWXCY2fM8P4AAO3_WO7cKBO_D7NndhenqRtAWHLHlHXD68u4ACjtL1_gQoE-y9rtATIkIq2UDsVAUB-2R3zyTbhXRDDd7vejsrzlke6SoP6_OH5oBCfalaKOJ43Gj4LV_37LcRPxW0N0ymBpR5w5joLq--PMqATMT-OodRVV"
-                onError={() => setImgError(true)}
-              />
-            ) : (
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-tertiary flex items-center justify-center text-white font-bold text-sm shadow-sm">
-                  %
-                </div>
-                <span className="font-headline-md text-on-surface font-extrabold tracking-tight">
-                  Interest<span className="text-primary-container">ly</span>
-                </span>
-              </div>
-            )}
+            <BrandLogo size="sm" showText={true} />
           </button>
           <span className="hidden xl:inline-flex items-center px-space-xs py-space-2xs rounded-full bg-surface-container-low text-secondary font-label-sm text-label-sm tracking-wide border border-surface-container-high/60">
             Smart Interest. Clear Results.

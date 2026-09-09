@@ -9,6 +9,9 @@ interface ThreeDCanvasProps {
 export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ growthFactor = 1.5, interactive = true }) => {
   const mountRef = useRef<HTMLDivElement>(null);
   const [isWebGLSupported, setIsWebGLSupported] = useState(true);
+  const torusMaterialRef = useRef<THREE.MeshPhysicalMaterial | null>(null);
+  const [activeTheme, setActiveTheme] = useState<'cyan' | 'emerald' | 'violet'>('cyan');
+  const [wireframeMode, setWireframeMode] = useState<boolean>(false);
 
   useEffect(() => {
     const container = mountRef.current;
@@ -41,7 +44,7 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ growthFactor = 1.5, 
     camera.position.set(0, 0, 8);
 
     // --- Lighting ---
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
 
     const primaryLight = new THREE.DirectionalLight(0x3b82f6, 3.5);
@@ -60,7 +63,7 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ growthFactor = 1.5, 
     const mainGroup = new THREE.Group();
     scene.add(mainGroup);
 
-    // 1. Central Metallic Torus Knot (Symbol of compounding loop)
+    // 1. Central Metallic Torus Knot (Symbol of compounding cycles)
     const torusGeometry = new THREE.TorusKnotGeometry(1.4, 0.42, 140, 24, 2, 3);
     const torusMaterial = new THREE.MeshPhysicalMaterial({
       color: 0x2563eb,
@@ -72,6 +75,7 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ growthFactor = 1.5, 
       transmission: 0.1,
       wireframe: false,
     });
+    torusMaterialRef.current = torusMaterial;
     const torusMesh = new THREE.Mesh(torusGeometry, torusMaterial);
     mainGroup.add(torusMesh);
 
@@ -104,7 +108,6 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ growthFactor = 1.5, 
     const particleCount = 70;
     const particleGeo = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
-    const scales = new Float32Array(particleCount);
 
     for (let i = 0; i < particleCount; i++) {
       const radius = 2.8 + Math.random() * 2.2;
@@ -114,7 +117,6 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ growthFactor = 1.5, 
       positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
       positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
       positions[i * 3 + 2] = radius * Math.cos(phi);
-      scales[i] = Math.random() * 0.08 + 0.02;
     }
 
     particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
@@ -131,16 +133,12 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ growthFactor = 1.5, 
     // Mouse Tracking for Interactive Parallax
     let targetRotationX = 0;
     let targetRotationY = 0;
-    let mouseX = 0;
-    let mouseY = 0;
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!interactive) return;
       const rect = container.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      mouseX = x;
-      mouseY = y;
       targetRotationY = x * 1.4;
       targetRotationX = y * 1.4;
     };
@@ -162,24 +160,29 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ growthFactor = 1.5, 
 
     // Animation Loop
     let animationFrameId: number;
-    let clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
 
-      // Idle Rotation + Interactive Interpolation
-      mainGroup.rotation.y += 0.008;
-      mainGroup.rotation.x += 0.004;
+      // Constant gentle rotation
+      torusMesh.rotation.x = elapsedTime * 0.35;
+      torusMesh.rotation.y = elapsedTime * 0.45;
 
-      ring1.rotation.z += 0.006;
-      ring2.rotation.x += 0.005;
+      ring1.rotation.z = elapsedTime * 0.2;
+      ring1.rotation.x = Math.PI / 3 + Math.sin(elapsedTime * 0.5) * 0.15;
 
-      // Smooth damp towards cursor target
+      ring2.rotation.z = -elapsedTime * 0.15;
+      ring2.rotation.y = Math.PI / 4 + Math.cos(elapsedTime * 0.4) * 0.2;
+
+      particleSystem.rotation.y = elapsedTime * 0.08;
+
+      // Mouse Parallax with Damping
       mainGroup.rotation.y += (targetRotationY - mainGroup.rotation.y * 0.1) * 0.05;
       mainGroup.rotation.x += (targetRotationX - mainGroup.rotation.x * 0.1) * 0.05;
 
-      // Pulse based on growthFactor
+      // Subtle pulse
       const pulse = 1 + Math.sin(elapsedTime * 2) * 0.03 * Math.min(growthFactor, 2);
       torusMesh.scale.set(pulse, pulse, pulse);
 
@@ -210,18 +213,94 @@ export const ThreeDCanvas: React.FC<ThreeDCanvasProps> = ({ growthFactor = 1.5, 
     };
   }, [growthFactor, interactive]);
 
+  const updateTheme = (theme: 'cyan' | 'emerald' | 'violet') => {
+    setActiveTheme(theme);
+    if (!torusMaterialRef.current) return;
+    if (theme === 'cyan') torusMaterialRef.current.color.setHex(0x2563eb);
+    if (theme === 'emerald') torusMaterialRef.current.color.setHex(0x059669);
+    if (theme === 'violet') torusMaterialRef.current.color.setHex(0x7c3aed);
+  };
+
+  const toggleWireframe = () => {
+    if (!torusMaterialRef.current) return;
+    const next = !wireframeMode;
+    setWireframeMode(next);
+    torusMaterialRef.current.wireframe = next;
+  };
+
   if (!isWebGLSupported) {
     return (
       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 via-tertiary/10 to-transparent rounded-3xl p-8 border border-primary/20">
-        <div className="w-48 h-48 rounded-full border-4 border-primary/30 border-t-primary animate-spin"></div>
+        <div className="w-48 h-48 rounded-full border-4 border-primary/30 border-t-primary animate-spin" />
       </div>
     );
   }
 
   return (
-    <div
-      ref={mountRef}
-      className="w-full h-full min-h-[380px] sm:min-h-[440px] lg:min-h-[500px] relative cursor-grab active:cursor-grabbing flex items-center justify-center select-none"
-    />
+    <div className="relative w-full h-full flex flex-col items-center justify-center">
+      {/* Three.js Canvas Container */}
+      <div
+        ref={mountRef}
+        className="w-full h-full min-h-[360px] sm:min-h-[420px] lg:min-h-[480px] relative cursor-grab active:cursor-grabbing flex items-center justify-center select-none"
+      />
+
+      {/* Floating 3D Micro-Chips (Overlaid for high-tech financial visual depth) */}
+      <div className="absolute top-6 -left-2 sm:left-4 z-10 px-3 py-1.5 rounded-xl bg-surface-container-lowest/85 backdrop-blur-xl border border-outline-variant/30 shadow-lg text-xs font-mono animate-bounce [animation-duration:4s]">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+          <span className="text-secondary font-medium">Daily Accrual:</span>
+          <span className="font-bold text-on-surface">+₹32.88/day</span>
+        </div>
+      </div>
+
+      <div className="absolute bottom-14 -right-2 sm:right-4 z-10 px-3 py-1.5 rounded-xl bg-surface-container-lowest/85 backdrop-blur-xl border border-outline-variant/30 shadow-lg text-xs font-mono">
+        <div className="flex items-center gap-1.5">
+          <span className="material-symbols-outlined text-xs text-primary">calendar_month</span>
+          <span className="text-secondary font-medium">Interval:</span>
+          <span className="font-bold text-primary">194 Days</span>
+        </div>
+      </div>
+
+      {/* Interactive 3D Shader Controls Pill */}
+      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-lowest/90 backdrop-blur-xl border border-outline-variant/30 shadow-xl text-xs">
+        <span className="text-[11px] font-mono text-secondary font-semibold hidden sm:inline">Shader:</span>
+        <div className="flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => updateTheme('cyan')}
+            className={`w-3.5 h-3.5 rounded-full bg-blue-600 transition-all ${
+              activeTheme === 'cyan' ? 'ring-2 ring-blue-400 ring-offset-1 ring-offset-surface scale-110' : 'opacity-70 hover:opacity-100'
+            }`}
+            title="Cobalt Blue"
+          />
+          <button
+            type="button"
+            onClick={() => updateTheme('emerald')}
+            className={`w-3.5 h-3.5 rounded-full bg-emerald-500 transition-all ${
+              activeTheme === 'emerald' ? 'ring-2 ring-emerald-400 ring-offset-1 ring-offset-surface scale-110' : 'opacity-70 hover:opacity-100'
+            }`}
+            title="Emerald Yield"
+          />
+          <button
+            type="button"
+            onClick={() => updateTheme('violet')}
+            className={`w-3.5 h-3.5 rounded-full bg-purple-600 transition-all ${
+              activeTheme === 'violet' ? 'ring-2 ring-purple-400 ring-offset-1 ring-offset-surface scale-110' : 'opacity-70 hover:opacity-100'
+            }`}
+            title="Amethyst Multiplier"
+          />
+        </div>
+        <div className="w-px h-3 bg-outline-variant/40 mx-0.5" />
+        <button
+          type="button"
+          onClick={toggleWireframe}
+          className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold transition-all ${
+            wireframeMode ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
+          }`}
+        >
+          {wireframeMode ? 'SOLID' : 'WIRE'}
+        </button>
+      </div>
+    </div>
   );
 };

@@ -1,23 +1,37 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
+export interface TickerItem {
+  title: string;
+  tag: string;
+  icon: string;
+}
+
+const DEFAULT_TICKER_ITEMS: TickerItem[] = [
+  { title: 'Date-to-Date Ledger', tag: 'ACT/365 & 360', icon: 'calendar_month' },
+  { title: 'Continuous Compounding', tag: 'A = P·e^rt', icon: 'all_inclusive' },
+  { title: 'Loan Prepayment Slasher', tag: 'Save Interest', icon: 'content_cut' },
+  { title: 'ISO 31-11 Derivations', tag: 'Formal Proofs', icon: 'calculate' },
+  { title: 'Vector PDF Statements', tag: 'Audit-Grade', icon: 'picture_as_pdf' },
+  { title: 'Indian Currency In Words', tag: 'Lakhs & Crores', icon: 'spellcheck' },
+  { title: 'Zero Cloud Storage', tag: '100% Private', icon: 'lock' },
+];
+
 interface GsapTickerProps {
-  items: Array<{
-    title: string;
-    tag: string;
-    icon: string;
-  }>;
+  items?: TickerItem[];
   speed?: number;
   direction?: 'left' | 'right';
 }
 
 export const GsapTicker: React.FC<GsapTickerProps> = ({
-  items,
+  items = DEFAULT_TICKER_ITEMS,
   speed = 40,
   direction = 'left',
 }) => {
   const tickerRef = useRef<HTMLDivElement>(null);
   const tweenRef = useRef<gsap.core.Tween | null>(null);
+
+  const safeItems = items && Array.isArray(items) && items.length > 0 ? items : DEFAULT_TICKER_ITEMS;
 
   useEffect(() => {
     const el = tickerRef.current;
@@ -42,7 +56,7 @@ export const GsapTicker: React.FC<GsapTickerProps> = ({
     return () => {
       tweenRef.current?.kill();
     };
-  }, [items, speed, direction]);
+  }, [safeItems, speed, direction]);
 
   const handleMouseEnter = () => {
     tweenRef.current?.timeScale(0.3); // smooth slow-down on hover
@@ -53,7 +67,7 @@ export const GsapTicker: React.FC<GsapTickerProps> = ({
   };
 
   // Double the items to make the loop seamless
-  const duplicatedItems = [...items, ...items];
+  const duplicatedItems = [...safeItems, ...safeItems];
 
   return (
     <div
