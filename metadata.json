@@ -1,0 +1,6 @@
+{
+  "name": "Interestly - Financial Math & Interest Calculator",
+  "description": "High-precision financial calculation infrastructure for compound interest, custom date-to-date cash flow ledgers with staggered inflows and withdrawals, debt amortization, and investment growth.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

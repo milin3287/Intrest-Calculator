@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#004ac6" />
+      <stop offset="50%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#4f46e5" />
+    </linearGradient>
+    <filter id="softGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#004ac6" flood-opacity="0.35" />
+    </filter>
+  </defs>
+  
+  <!-- Base Background Squircle -->
+  <rect width="512" height="512" rx="112" fill="url(#brandGrad)" />
+  
+  <!-- Calendar and Interest Graphic -->
+  <g transform="translate(64, 64)" filter="url(#softGlow)">
+    <!-- Calendar Body -->
+    <rect x="32" y="56" width="320" height="272" rx="36" fill="#ffffff" />
+    <!-- Calendar Top Bar Header -->
+    <path d="M32 92 C32 72 48 56 68 56 L316 56 C336 56 352 72 352 92 L352 120 L32 120 Z" fill="#003592" />
+    
+    <!-- Calendar Binder Rings -->
+    <rect x="96" y="32" width="24" height="48" rx="12" fill="#93c5fd" />
+    <rect x="264" y="32" width="24" height="48" rx="12" fill="#93c5fd" />
+    
+    <!-- Percent / Growth / Coin Emblem -->
+    <!-- Top-left circle of % -->
+    <circle cx="132" cy="188" r="22" fill="#004ac6" />
+    <!-- Diagonal Slash of % -->
+    <line x1="252" y1="168" x2="132" y2="288" stroke="#004ac6" stroke-width="26" stroke-linecap="round" />
+    <!-- Bottom-right circle of % -->
+    <circle cx="252" cy="268" r="22" fill="#004ac6" />
+    
+    <!-- Sparkle / Star in top-right -->
+    <path d="M300 170 Q300 195 325 195 Q300 195 300 220 Q300 195 275 195 Q300 195 300 170 Z" fill="#f59e0b" />
+  </g>
+</svg>
