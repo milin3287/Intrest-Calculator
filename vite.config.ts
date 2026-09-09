@@ -14,9 +14,9 @@ export default defineConfig(() => {
         includeAssets: ['icon.svg', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png', 'manifest.json'],
         manifest: {
           id: '/',
-          name: 'Interestly - Financial Math & Interest Calculator',
-          short_name: 'Interestly',
-          description: 'High-precision financial math calculator for custom date cash flows, running interest ledgers, compound interest, and loans.',
+          name: 'MRP Interestly - Financial Math & Precision Interest Calculator',
+          short_name: 'MRP Interestly',
+          description: 'High-precision financial calculation infrastructure for compound interest, custom date-to-date cash flow ledgers with staggered inflows and withdrawals, debt amortization, and investment growth.',
           theme_color: '#004ac6',
           background_color: '#ffffff',
           display: 'standalone',
@@ -44,7 +44,7 @@ export default defineConfig(() => {
           ],
         },
         devOptions: {
-          enabled: true,
+          enabled: false,
         },
       }),
     ],

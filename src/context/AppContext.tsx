@@ -112,11 +112,29 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentPath, setCurrentPath] = useState<PagePath>('home');
   const [currency, setCurrencyState] = useState<CurrencyCode>('INR');
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const savedTheme = localStorage.getItem('interestly_theme');
+      if (savedTheme === 'light' || savedTheme === 'dark') return savedTheme;
+      if (
+        typeof window !== 'undefined' &&
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-color-scheme: dark)')?.matches
+      ) {
+        return 'dark';
+      }
+    } catch {
+      // ignore
+    }
+    return 'light';
+  });
   const [history, setHistory] = useState<CalculationAuditItem[]>(() => {
     try {
       const saved = localStorage.getItem('interestly_audit_history');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
     } catch {
       // ignore
     }
@@ -135,6 +153,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [history]);
 
   useEffect(() => {
+    try {
+      localStorage.setItem('interestly_theme', theme);
+    } catch {
+      // ignore
+    }
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {

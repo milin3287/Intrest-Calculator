@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { Toast } from './components/Toast';
@@ -48,7 +49,9 @@ const AppContent: React.FC = () => {
     <div className="min-h-screen flex flex-col bg-surface text-on-surface transition-colors duration-200">
       <Header />
       <main className="flex-1 max-w-7xl w-full mx-auto px-space-md sm:px-space-lg lg:px-space-xl pt-20 md:pt-24 pb-space-xl">
-        {renderCurrentPage()}
+        <ErrorBoundary>
+          {renderCurrentPage()}
+        </ErrorBoundary>
       </main>
       <Footer />
       <Toast />
@@ -60,8 +63,10 @@ const AppContent: React.FC = () => {
 
 export default function App() {
   return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <AppContent />
+      </AppProvider>
+    </ErrorBoundary>
   );
 }
