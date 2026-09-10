@@ -8,82 +8,7 @@ export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
   GBP: { code: 'GBP', symbol: '£', label: 'GBP £', rateAgainstINR: 0.0094 },
 };
 
-const INITIAL_HISTORY: CalculationAuditItem[] = [
-  {
-    id: 'AUD-8921',
-    category: 'Advanced Solver',
-    title: 'Quarterly Compound Interest — ₹50,000 @ 8% for 3 yrs',
-    principal: 50000,
-    rate: 8.0,
-    tenureYears: 3,
-    frequency: 'Quarterly (n=4)',
-    resultValue: 63412.09,
-    resultFormatted: '₹63,412.09',
-    formula: 'A = 50,000 × (1 + 0.08/4)^(4 × 3)',
-    timestamp: 'Today, 14:32',
-    details: [
-      { label: 'P', value: '₹50,000' },
-      { label: 'r', value: '8.00% APR' },
-      { label: 't', value: '3 Years' },
-      { label: 'Net Interest', value: '₹13,412.09' },
-    ],
-  },
-  {
-    id: 'AUD-8920',
-    category: 'Loan EMI',
-    title: 'Home Loan EMI — ₹30,00,000 @ 8.75% for 15 yrs',
-    principal: 3000000,
-    rate: 8.75,
-    tenureYears: 15,
-    frequency: 'Monthly (n=12)',
-    resultValue: 29985,
-    resultFormatted: '₹29,985 /mo',
-    formula: 'EMI = [P × r × (1+r)^n] / [(1+r)^n - 1]',
-    timestamp: 'Yesterday, 19:10',
-    details: [
-      { label: 'Sanctioned', value: '₹30,00,000' },
-      { label: 'Rate', value: '8.75% Floating' },
-      { label: 'Tenure', value: '180 Months' },
-      { label: 'Total Repayment', value: '₹53,97,322' },
-    ],
-  },
-  {
-    id: 'AUD-8919',
-    category: 'Investment',
-    title: 'Retirement SIP Growth — ₹15,000/mo @ 12% for 15 yrs',
-    principal: 2700000,
-    rate: 12.0,
-    tenureYears: 15,
-    frequency: 'Monthly SIP',
-    resultValue: 8423540,
-    resultFormatted: '₹84,23,540',
-    formula: 'FV = P(1+r)ⁿ + M × [((1+i)ⁿ - 1)/i] × (1+i)',
-    timestamp: 'Oct 24, 11:05',
-    details: [
-      { label: 'Outlay', value: '₹27,00,000' },
-      { label: 'CAGR Target', value: '12.00%' },
-      { label: 'Real Value (6% CPI)', value: '₹35,14,832' },
-    ],
-  },
-  {
-    id: 'AUD-8918',
-    category: 'Simple Interest',
-    title: 'Simple Interest Commercial Note — ₹2,00,000 @ 10% for 180 days',
-    principal: 200000,
-    rate: 10.0,
-    tenureYears: 0.493,
-    frequency: 'Commercial (365 days)',
-    resultValue: 9863.01,
-    resultFormatted: '₹9,863.01',
-    formula: 'I = (2,00,000 × 10 × (180/365)) / 100',
-    timestamp: 'Oct 20, 09:40',
-    details: [
-      { label: 'Face Value', value: '₹2,00,000' },
-      { label: 'Coupon', value: '10.00% p.a.' },
-      { label: 'Maturity Value', value: '₹2,09,863.01' },
-    ],
-  },
-];
+const INITIAL_HISTORY: CalculationAuditItem[] = [];
 
 interface AppContextType {
   currentPath: PagePath;
@@ -133,7 +58,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const saved = localStorage.getItem('interestly_audit_history');
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed.filter(
+            (item: CalculationAuditItem) =>
+              !['AUD-8921', 'AUD-8920', 'AUD-8919', 'AUD-8918'].includes(item.id)
+          );
+          return cleaned;
+        }
       }
     } catch {
       // ignore

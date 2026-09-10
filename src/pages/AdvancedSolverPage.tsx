@@ -6,15 +6,15 @@ export const AdvancedSolverPage: React.FC = () => {
 
   const [activeMode, setActiveMode] = useState<'Formula' | 'Equation' | 'Problem'>('Problem');
 
-  const [promptText, setPromptText] = useState<string>(
-    'Calculate the compound interest on ₹50,000 at 8% per annum for 3 years, compounded quarterly. Also determine the effective annual yield and difference compared to simple interest.'
-  );
+  const [promptText, setPromptText] = useState<string>('');
 
   // Extracted Variables
-  const [pVal, setPVal] = useState<number>(50000);
-  const [rVal, setRVal] = useState<number>(8.0);
-  const [tVal, setTVal] = useState<number>(3.0);
+  const [pVal, setPVal] = useState<number>(0);
+  const [rVal, setRVal] = useState<number>(0);
+  const [tVal, setTVal] = useState<number>(0);
   const [nVal, setNVal] = useState<number>(4);
+
+  const hasData = pVal > 0 && rVal > 0 && tVal > 0;
 
   // Calculations
   const rDecimal = rVal / 100;
@@ -74,6 +74,10 @@ export const AdvancedSolverPage: React.FC = () => {
   };
 
   const handleSolve = () => {
+    if (!hasData) {
+      triggerToast('Please select a quick template or enter problem values first.');
+      return;
+    }
     addHistoryItem({
       category: 'Advanced Solver',
       title: `Quarterly Compound Interest — ${formatMoney(pVal)} @ ${rVal}% for ${tVal} yrs`,
@@ -361,46 +365,56 @@ export const AdvancedSolverPage: React.FC = () => {
             <div className="absolute right-0 top-0 bottom-0 w-1/2 opacity-10 pointer-events-none flex items-center justify-end pr-space-md">
               <span className="material-symbols-outlined text-[240px] leading-none">calculate</span>
             </div>
-            <div className="relative z-10 flex flex-col gap-space-md">
-              <div className="flex items-center justify-between">
-                <span className="px-space-xs py-space-2xs rounded-full bg-on-primary/15 font-label-sm text-label-sm uppercase tracking-wider font-semibold text-on-primary">
-                  Solution Matrix Verified
-                </span>
-                <span className="font-label-sm text-label-sm text-on-primary/80">Computed in 4.2ms</span>
+            {!hasData ? (
+              <div className="relative z-10 flex flex-col items-center justify-center py-10 text-center text-on-primary">
+                <span className="material-symbols-outlined text-[44px] mb-2 opacity-80">psychology</span>
+                <h3 className="font-headline-sm text-headline-sm font-bold">Solver Ready</h3>
+                <p className="font-body-sm text-body-sm text-on-primary/85 max-w-sm mt-1">
+                  Type a mathematical query or click one of the Quick Templates to load problem parameters and calculate step-by-step proofs.
+                </p>
               </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-lg pt-space-xs">
-                <div>
-                  <span className="font-label-sm text-label-sm uppercase tracking-wide text-on-primary/80 block mb-space-2xs">
-                    Net Compound Interest (CI)
+            ) : (
+              <div className="relative z-10 flex flex-col gap-space-md">
+                <div className="flex items-center justify-between">
+                  <span className="px-space-xs py-space-2xs rounded-full bg-on-primary/15 font-label-sm text-label-sm uppercase tracking-wider font-semibold text-on-primary">
+                    Solution Matrix Verified
                   </span>
-                  <div className="font-display-xl text-display-xl tracking-tight font-bold">
-                    {formatMoney(compoundInterestCI, 2)}
-                  </div>
-                  <div className="flex items-center gap-space-2xs mt-space-2xs font-body-sm text-body-sm text-on-primary/90">
-                    <span className="material-symbols-outlined text-[18px]">trending_up</span>
-                    <span>
-                      +{formatMoney(alphaSpread, 2)} vs Simple Interest (+{alphaPct.toFixed(2)}%)
-                    </span>
-                  </div>
+                  <span className="font-label-sm text-label-sm text-on-primary/80">Computed in 4.2ms</span>
                 </div>
 
-                <div className="sm:border-l sm:border-on-primary/20 sm:pl-space-lg flex flex-col justify-center">
-                  <span className="font-label-sm text-label-sm uppercase tracking-wide text-on-primary/80 block mb-space-2xs">
-                    Total Maturity Amount (A)
-                  </span>
-                  <div className="font-data-mono-lg text-data-mono-lg font-bold">
-                    {formatMoney(maturityA, 2)}
-                  </div>
-                  <div className="mt-space-xs inline-flex items-center gap-space-xs px-space-sm py-space-2xs rounded-lg bg-on-primary/10 w-fit">
-                    <span className="font-label-sm text-label-sm font-semibold">Effective Annual Rate (EAR):</span>
-                    <span className="font-data-mono-md text-data-mono-md font-bold text-tertiary-fixed">
-                      {effectiveAnnualRate.toFixed(2)}% p.a.
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-lg pt-space-xs">
+                  <div>
+                    <span className="font-label-sm text-label-sm uppercase tracking-wide text-on-primary/80 block mb-space-2xs">
+                      Net Compound Interest (CI)
                     </span>
+                    <div className="font-display-xl text-display-xl tracking-tight font-bold">
+                      {formatMoney(compoundInterestCI, 2)}
+                    </div>
+                    <div className="flex items-center gap-space-2xs mt-space-2xs font-body-sm text-body-sm text-on-primary/90">
+                      <span className="material-symbols-outlined text-[18px]">trending_up</span>
+                      <span>
+                        +{formatMoney(alphaSpread, 2)} vs Simple Interest (+{alphaPct.toFixed(2)}%)
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="sm:border-l sm:border-on-primary/20 sm:pl-space-lg flex flex-col justify-center">
+                    <span className="font-label-sm text-label-sm uppercase tracking-wide text-on-primary/80 block mb-space-2xs">
+                      Total Maturity Amount (A)
+                    </span>
+                    <div className="font-data-mono-lg text-data-mono-lg font-bold">
+                      {formatMoney(maturityA, 2)}
+                    </div>
+                    <div className="mt-space-xs inline-flex items-center gap-space-xs px-space-sm py-space-2xs rounded-lg bg-on-primary/10 w-fit">
+                      <span className="font-label-sm text-label-sm font-semibold">Effective Annual Rate (EAR):</span>
+                      <span className="font-data-mono-md text-data-mono-md font-bold text-tertiary-fixed">
+                        {effectiveAnnualRate.toFixed(2)}% p.a.
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Section 1: Problem Summary & Given Parameters */}

@@ -47,9 +47,9 @@ export const DateLedgerPage: React.FC = () => {
   });
 
   // New transaction input state
-  const [newDate, setNewDate] = useState<string>(addDays(todayStr, 35));
+  const [newDate, setNewDate] = useState<string>(todayStr);
   const [newType, setNewType] = useState<CashFlowType>('credit');
-  const [newAmount, setNewAmount] = useState<number>(5000);
+  const [newAmount, setNewAmount] = useState<number>(0);
   const [newNote, setNewNote] = useState<string>('');
 
   // Editing row state
@@ -1225,6 +1225,13 @@ export const DateLedgerPage: React.FC = () => {
             </div>
 
             <div className="max-h-80 overflow-y-auto space-y-2 pr-1">
+              {calculation.sortedItems.length === 0 && (
+                <div className="py-8 text-center text-xs text-secondary flex flex-col items-center justify-center">
+                  <span className="material-symbols-outlined text-[28px] text-outline mb-1">receipt_long</span>
+                  <span className="font-semibold text-on-surface">No transactions entered yet</span>
+                  <span className="text-2xs text-secondary mt-0.5">Enter an amount and date above to record your first entry.</span>
+                </div>
+              )}
               {calculation.sortedItems.map((tx) => {
                 const isCredit = tx.type === 'credit';
                 const isEditing = editingId === tx.id;
@@ -1479,7 +1486,13 @@ export const DateLedgerPage: React.FC = () => {
                 {(() => {
                   const allRows = [...calculation.rows];
                   if (calculation.finalIntervalRow) allRows.push(calculation.finalIntervalRow);
-                  if (allRows.length === 0) return null;
+                  if (allRows.length === 0) {
+                    return (
+                      <text x="250" y="65" textAnchor="middle" fill="#94a3b8" fontSize="12" fontFamily="sans-serif">
+                        No transactions entered yet. Enter an amount above to plot balance curve.
+                      </text>
+                    );
+                  }
 
                   const maxPrincipal = Math.max(1, ...allRows.map(r => r.runningPrincipal));
                   const maxTotal = Math.max(1, ...allRows.map(r => r.runningTotal));
@@ -1594,6 +1607,15 @@ export const DateLedgerPage: React.FC = () => {
             {/* View Mode 1: Mobile-Friendly Cards Stream */}
             {passbookViewMode === 'cards' ? (
               <div className="p-space-md space-y-3 bg-surface-container-low/30">
+                {calculation.rows.length === 0 && (
+                  <div className="p-8 text-center bg-surface-container-lowest rounded-xl border border-surface-container-high/60">
+                    <div className="flex flex-col items-center justify-center max-w-sm mx-auto text-secondary">
+                      <span className="material-symbols-outlined text-[36px] text-primary/60 mb-2">post_add</span>
+                      <span className="font-semibold text-sm text-on-surface mb-1">No transactions recorded</span>
+                      <span className="text-xs">Fill in an amount above to calculate running balance and interest accrual.</span>
+                    </div>
+                  </div>
+                )}
                 {calculation.rows.map((row) => {
                   const isCredit = row.type === 'credit';
                   const isExpanded = expandedRow === row.index;
@@ -1767,6 +1789,17 @@ export const DateLedgerPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-surface-container-high/40 font-body-sm">
+                  {calculation.rows.length === 0 && (
+                    <tr>
+                      <td colSpan={8} className="py-12 px-4 text-center">
+                        <div className="flex flex-col items-center justify-center max-w-sm mx-auto text-secondary">
+                          <span className="material-symbols-outlined text-[36px] text-primary/60 mb-2">post_add</span>
+                          <span className="font-semibold text-sm text-on-surface mb-1">No transactions recorded</span>
+                          <span className="text-xs">Fill in an amount above to calculate running balance and interest accrual.</span>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
                   {calculation.rows.map((row) => {
                     const isCredit = row.type === 'credit';
                     const isExpanded = expandedRow === row.index;

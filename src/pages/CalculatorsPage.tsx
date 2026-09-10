@@ -16,7 +16,7 @@ export const CalculatorsPage: React.FC = () => {
   } = useApp();
 
   // Primary Workspace Parameters
-  const [principal, setPrincipal] = useState<number>(500000);
+  const [principal, setPrincipal] = useState<number>(0);
   const [rate, setRate] = useState<number>(8.5);
   const [tenureYears, setTenureYears] = useState<number>(5);
   const [tenureUnit, setTenureUnit] = useState<'Years' | 'Months' | 'Days'>('Years');
@@ -24,11 +24,11 @@ export const CalculatorsPage: React.FC = () => {
 
   // Advanced adjustments
   const [accordionOpen, setAccordionOpen] = useState<boolean>(true);
-  const [periodicAdditionsActive, setPeriodicAdditionsActive] = useState<boolean>(true);
-  const [periodicMonthlyAmount, setPeriodicMonthlyAmount] = useState<number>(5000);
-  const [inflationActive, setInflationActive] = useState<boolean>(true);
+  const [periodicAdditionsActive, setPeriodicAdditionsActive] = useState<boolean>(false);
+  const [periodicMonthlyAmount, setPeriodicMonthlyAmount] = useState<number>(0);
+  const [inflationActive, setInflationActive] = useState<boolean>(false);
   const [inflationRate, setInflationRate] = useState<number>(5.5);
-  const [ltcgTaxActive, setLtcgTaxActive] = useState<boolean>(true);
+  const [ltcgTaxActive, setLtcgTaxActive] = useState<boolean>(false);
   const [ltcgRate, setLtcgRate] = useState<number>(10.0);
 
   // Amortization Schedule Modal
@@ -36,7 +36,7 @@ export const CalculatorsPage: React.FC = () => {
 
   // Quick adjust helpers
   const adjustPrincipal = (delta: number) => {
-    setPrincipal(prev => Math.min(5000000, Math.max(10000, prev + delta)));
+    setPrincipal(prev => Math.min(50000000, Math.max(0, prev + delta)));
   };
 
   const adjustRate = (delta: number) => {
@@ -338,22 +338,23 @@ export const CalculatorsPage: React.FC = () => {
                 <input
                   className="w-full px-space-sm py-2.5 bg-surface-container-lowest font-data-mono-lg text-data-mono-lg text-on-surface font-semibold focus:outline-none"
                   id="principal-input"
-                  max="5000000"
-                  min="10000"
-                  step="5000"
+                  max="50000000"
+                  min="0"
+                  step="1000"
                   type="number"
-                  value={principal}
+                  placeholder="Enter principal amount"
+                  value={principal === 0 ? '' : principal}
                   onChange={e => setPrincipal(parseFloat(e.target.value) || 0)}
                 />
               </div>
               <input
                 className="w-full accent-primary h-2 bg-surface-container rounded-lg cursor-pointer"
                 max="5000000"
-                min="10000"
+                min="0"
                 step="10000"
                 type="range"
                 value={principal}
-                onChange={e => setPrincipal(parseFloat(e.target.value))}
+                onChange={e => setPrincipal(parseFloat(e.target.value) || 0)}
               />
               {/* Quick Increment Badges */}
               <div className="flex items-center gap-space-2xs pt-1 flex-wrap">
@@ -380,10 +381,10 @@ export const CalculatorsPage: React.FC = () => {
                 </button>
                 <button
                   className="ml-auto text-outline hover:text-error text-body-sm font-body-sm transition-colors flex items-center gap-0.5"
-                  onClick={() => setPrincipal(500000)}
+                  onClick={() => setPrincipal(0)}
                   type="button"
                 >
-                  <span className="material-symbols-outlined text-[14px]">refresh</span> Reset
+                  <span className="material-symbols-outlined text-[14px]">refresh</span> Clear
                 </button>
               </div>
             </div>
@@ -561,7 +562,8 @@ export const CalculatorsPage: React.FC = () => {
                         className="w-24 text-right px-2 py-1 bg-surface-container-low rounded font-data-mono-md text-label-md font-semibold text-on-surface border border-surface-container-high/50"
                         type="number"
                         step="500"
-                        value={periodicMonthlyAmount}
+                        placeholder="0"
+                        value={periodicMonthlyAmount === 0 ? '' : periodicMonthlyAmount}
                         onChange={e => setPeriodicMonthlyAmount(parseFloat(e.target.value) || 0)}
                       />
                       <button
@@ -666,12 +668,13 @@ export const CalculatorsPage: React.FC = () => {
               </button>
               <button
                 onClick={() => {
-                  setPrincipal(500000);
+                  setPrincipal(0);
                   setRate(8.5);
                   setTenureYears(5);
                   setFrequency(4);
-                  setPeriodicMonthlyAmount(5000);
-                  triggerToast('Workspace reset to defaults.');
+                  setPeriodicMonthlyAmount(0);
+                  setPeriodicAdditionsActive(false);
+                  triggerToast('Workspace cleared.');
                 }}
                 className="w-full sm:w-11 h-11 rounded-lg bg-surface-container-low hover:bg-surface-container text-secondary hover:text-error flex items-center justify-center transition-colors border border-surface-container-high/40"
                 title="Reset All Fields"

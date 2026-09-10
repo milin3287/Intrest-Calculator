@@ -5,10 +5,10 @@ export const LoanAndEmiPage: React.FC = () => {
   const { formatMoney, currencyConfig, triggerToast, addHistoryItem } = useApp();
 
   // Loan parameters
-  const [loanAmount, setLoanAmount] = useState<number>(2500000);
+  const [loanAmount, setLoanAmount] = useState<number>(0);
   const [interestRate, setInterestRate] = useState<number>(8.75);
   const [tenureYears, setTenureYears] = useState<number>(15);
-  const [prepaymentAmount, setPrepaymentAmount] = useState<number>(10000); // extra per month
+  const [prepaymentAmount, setPrepaymentAmount] = useState<number>(0); // extra per month
   const [prepaymentActive, setPrepaymentActive] = useState<boolean>(false);
   const [processingFeePct, setProcessingFeePct] = useState<number>(0.5);
 
@@ -162,21 +162,22 @@ export const LoanAndEmiPage: React.FC = () => {
                 <input
                   className="w-full px-space-sm py-2.5 bg-surface-container-lowest font-data-mono-md text-data-mono-md text-on-surface font-semibold focus:outline-none"
                   type="number"
-                  min="50000"
+                  min="0"
                   max="50000000"
                   step="50000"
-                  value={loanAmount}
+                  placeholder="Enter loan amount"
+                  value={loanAmount === 0 ? '' : loanAmount}
                   onChange={e => setLoanAmount(parseFloat(e.target.value) || 0)}
                 />
               </div>
               <input
                 type="range"
                 className="w-full accent-primary h-2 bg-surface-container rounded-lg cursor-pointer mt-1"
-                min="100000"
+                min="0"
                 max="10000000"
                 step="50000"
                 value={loanAmount}
-                onChange={e => setLoanAmount(parseFloat(e.target.value))}
+                onChange={e => setLoanAmount(parseFloat(e.target.value) || 0)}
               />
               <div className="flex items-center gap-space-2xs pt-1 flex-wrap">
                 {[500000, 1500000, 2500000, 5000000, 8000000].map(amt => (
@@ -293,8 +294,9 @@ export const LoanAndEmiPage: React.FC = () => {
                     <input
                       type="number"
                       step="1000"
+                      placeholder="0"
                       className="w-full px-2 py-1 text-right font-data-mono-md text-label-md font-semibold focus:outline-none"
-                      value={prepaymentAmount}
+                      value={prepaymentAmount === 0 ? '' : prepaymentAmount}
                       onChange={e => setPrepaymentAmount(parseFloat(e.target.value) || 0)}
                     />
                   </div>

@@ -17,34 +17,12 @@ export interface ActiveLedgerState {
 }
 
 const DEFAULT_ACTIVE_LEDGER: ActiveLedgerState = {
-  transactions: [
-    {
-      id: 'tx-init-1',
-      date: '2026-09-01',
-      type: 'credit',
-      amount: 10000000, // 1 Crore Rs
-      note: 'Initial Capital Tranche A',
-    },
-    {
-      id: 'tx-init-2',
-      date: '2026-09-08',
-      type: 'credit',
-      amount: 5000000, // 50 Lakh Rs
-      note: 'Second Tranche Inflow',
-    },
-    {
-      id: 'tx-init-3',
-      date: '2026-09-18',
-      type: 'debit',
-      amount: 2500000, // 25 Lakh Rs
-      note: 'Client Partial Repayment / Taken',
-    },
-  ],
+  transactions: [],
   rate: 12.0,
   rateType: 'annual',
   compoundingMethod: 'simple',
   dayCountBasis: 365,
-  asOfDate: '2026-10-01',
+  asOfDate: new Date().toISOString().split('T')[0],
   userRole: 'borrower',
   lastSavedAt: new Date().toISOString(),
 };
@@ -58,7 +36,16 @@ export function getActiveLedger(): ActiveLedgerState {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (parsed && Array.isArray(parsed.transactions)) {
-        return parsed;
+        // Filter out legacy sample transactions if present
+        const cleanedTransactions = parsed.transactions.filter(
+          (tx: DateCashFlowItem) =>
+            !tx.id?.startsWith('tx-init-') &&
+            !tx.note?.includes('Initial Capital Tranche')
+        );
+        return {
+          ...parsed,
+          transactions: cleanedTransactions,
+        };
       }
     }
   } catch (err) {
@@ -90,17 +77,21 @@ export function getLedgerSlots(): DateLedgerSlot[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        return parsed;
+        // Filter out legacy sample slots with hardcoded 1 Crore
+        const filtered = parsed.filter(
+          (s: DateLedgerSlot) =>
+            !s.description?.includes('₹1 Crore Capital Scenario') &&
+            !s.id?.startsWith('SLOT-INIT')
+        );
+        return filtered;
       }
     }
   } catch (err) {
     console.error('Failed to parse slots:', err);
   }
 
-  // If empty, create initial baseline slot
-  const initial = createInitialSlot();
-  saveLedgerSlots([initial]);
-  return [initial];
+  // If empty, return empty list without filling default amounts
+  return [];
 }
 
 function saveLedgerSlots(slots: DateLedgerSlot[]): void {
@@ -227,61 +218,7 @@ export function clearAllLedgerSlots(keepLatest = true): DateLedgerSlot[] {
    SPECIAL SPACE: MONTHLY LEDGER BOOKS & MONTHLY DATA
    ========================================================================= */
 
-const INITIAL_MONTHLY_BOOKS: MonthlyLedgerBook[] = [
-  {
-    id: 'BOOK-2026-09-TRK',
-    monthKey: '2026-09',
-    monthTitle: 'September 2026',
-    bookTitle: 'September 2026 Capital Tranches',
-    note: 'Staggered project funding with 1 Crore initial disbursement and subsequent draws.',
-    createdAt: '2026-09-01T09:00:00.000Z',
-    updatedAt: '2026-09-08T14:30:00.000Z',
-    transactions: [
-      { id: 'tx-sep-1', date: '2026-09-01', type: 'credit', amount: 10000000, note: 'Tranche #1 Project Mobilization' },
-      { id: 'tx-sep-2', date: '2026-09-08', type: 'credit', amount: 5000000, note: 'Tranche #2 Equipment Advance' },
-      { id: 'tx-sep-3', date: '2026-09-18', type: 'debit', amount: 2000000, note: 'Client Phase 1 Milestone Repayment' },
-      { id: 'tx-sep-4', date: '2026-09-25', type: 'credit', amount: 3000000, note: 'Tranche #3 Material Procurement' },
-    ],
-    rate: 12.0,
-    rateType: 'annual',
-    compoundingMethod: 'simple',
-    dayCountBasis: 365,
-    asOfDate: '2026-09-30',
-    userRole: 'borrower',
-    openingPrincipal: 0,
-    totalInflows: 18000000,
-    totalOutflows: 2000000,
-    netPrincipal: 16000000,
-    accruedInterest: 108493,
-    grandSettlement: 16108493,
-  },
-  {
-    id: 'BOOK-2026-08-ARC',
-    monthKey: '2026-08',
-    monthTitle: 'August 2026',
-    bookTitle: 'August 2026 Commercial Note Settlement',
-    note: 'Short-term bridge financing for inventory cycle.',
-    createdAt: '2026-08-01T10:00:00.000Z',
-    updatedAt: '2026-08-31T18:00:00.000Z',
-    transactions: [
-      { id: 'tx-aug-1', date: '2026-08-05', type: 'credit', amount: 7500000, note: 'Bridge Facility Loan Draw' },
-      { id: 'tx-aug-2', date: '2026-08-15', type: 'credit', amount: 2500000, note: 'Supplemental Bridge Buffer' },
-      { id: 'tx-aug-3', date: '2026-08-28', type: 'debit', amount: 10000000, note: 'Full Principal Repayment' },
-    ],
-    rate: 10.5,
-    rateType: 'annual',
-    compoundingMethod: 'simple',
-    dayCountBasis: 365,
-    asOfDate: '2026-08-31',
-    userRole: 'borrower',
-    openingPrincipal: 0,
-    totalInflows: 10000000,
-    totalOutflows: 10000000,
-    netPrincipal: 0,
-    accruedInterest: 58972,
-    grandSettlement: 58972,
-  },
-];
+const INITIAL_MONTHLY_BOOKS: MonthlyLedgerBook[] = [];
 
 /**
  * Retrieve all saved monthly books from storage
@@ -292,16 +229,19 @@ export function getMonthlyBooks(): MonthlyLedgerBook[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        // Filter out legacy sample books
+        const filtered = parsed.filter(
+          (b: MonthlyLedgerBook) =>
+            b.id !== 'BOOK-2026-09-TRK' && b.id !== 'BOOK-2026-08-ARC'
+        );
+        return filtered;
       }
     }
   } catch (err) {
     console.error('Failed to load monthly books:', err);
   }
 
-  // Initialize with sample books so user has instant visual context
-  saveMonthlyBooks(INITIAL_MONTHLY_BOOKS);
-  return INITIAL_MONTHLY_BOOKS;
+  return [];
 }
 
 /**

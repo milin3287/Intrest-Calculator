@@ -6,15 +6,15 @@ import { SpotlightCard } from './SpotlightCard';
 export const InteractiveSimulator: React.FC = () => {
   const { navigateTo, formatMoney } = useApp();
 
-  const [principal, setPrincipal] = useState<number>(500000);
+  const [principal, setPrincipal] = useState<number>(0);
   const [rate, setRate] = useState<number>(12.5);
   const [tenure, setTenure] = useState<number>(7);
   const [frequency, setFrequency] = useState<number>(4); // Quarterly
 
   const r = rate / 100;
-  const maturity = principal * Math.pow(1 + r / frequency, frequency * tenure);
-  const interest = maturity - principal;
-  const multiplier = principal > 0 ? maturity / principal : 1;
+  const maturity = principal > 0 ? principal * Math.pow(1 + r / frequency, frequency * tenure) : 0;
+  const interest = maturity > 0 ? maturity - principal : 0;
+  const multiplier = principal > 0 ? maturity / principal : 0;
   const roi = principal > 0 ? (interest / principal) * 100 : 0;
 
   const triggerCelebration = () => {
@@ -50,21 +50,32 @@ export const InteractiveSimulator: React.FC = () => {
 
           {/* Slider 1: Principal */}
           <div className="space-y-2">
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between items-center text-sm">
               <span className="font-medium text-on-surface">Initial Principal (P)</span>
-              <span className="font-mono font-bold text-primary">{formatMoney(principal)}</span>
+              <div className="flex items-center gap-1">
+                <input
+                  type="number"
+                  placeholder="0"
+                  min={0}
+                  max={50000000}
+                  step={5000}
+                  value={principal === 0 ? '' : principal}
+                  onChange={(e) => setPrincipal(Number(e.target.value) || 0)}
+                  className="w-28 px-2 py-0.5 text-right text-sm font-mono font-bold text-primary bg-surface-container-lowest border border-outline-variant/30 rounded focus:outline-none"
+                />
+              </div>
             </div>
             <input
               type="range"
-              min={10000}
+              min={0}
               max={5000000}
               step={10000}
               value={principal}
-              onChange={(e) => setPrincipal(Number(e.target.value))}
+              onChange={(e) => setPrincipal(Number(e.target.value) || 0)}
               className="w-full h-2 bg-surface-container-highest rounded-lg appearance-none cursor-pointer accent-primary"
             />
             <div className="flex justify-between text-[11px] text-secondary font-mono">
-              <span>{formatMoney(10000)}</span>
+              <span>{formatMoney(0)}</span>
               <span>{formatMoney(2500000)}</span>
               <span>{formatMoney(5000000)}</span>
             </div>
@@ -179,17 +190,17 @@ export const InteractiveSimulator: React.FC = () => {
             {/* Visual ratio bar */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs font-mono text-secondary">
-                <span>Principal ({((principal / maturity) * 100).toFixed(0)}%)</span>
-                <span>Interest ({((interest / maturity) * 100).toFixed(0)}%)</span>
+                <span>Principal ({maturity > 0 ? ((principal / maturity) * 100).toFixed(0) : 0}%)</span>
+                <span>Interest ({maturity > 0 ? ((interest / maturity) * 100).toFixed(0) : 0}%)</span>
               </div>
               <div className="w-full h-3 rounded-full overflow-hidden bg-surface-container-highest flex">
                 <div
                   className="bg-primary transition-all duration-300"
-                  style={{ width: `${Math.max(5, (principal / maturity) * 100)}%` }}
+                  style={{ width: `${maturity > 0 ? Math.max(5, (principal / maturity) * 100) : 0}%` }}
                 />
                 <div
                   className="bg-tertiary transition-all duration-300"
-                  style={{ width: `${Math.max(5, (interest / maturity) * 100)}%` }}
+                  style={{ width: `${maturity > 0 ? Math.max(5, (interest / maturity) * 100) : 0}%` }}
                 />
               </div>
             </div>

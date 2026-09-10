@@ -7,17 +7,17 @@ export const InvestmentPage: React.FC = () => {
   const [investmentType, setInvestmentType] = useState<'SIP' | 'Lumpsum' | 'Goal'>('SIP');
 
   // SIP inputs
-  const [monthlyInvestment, setMonthlyInvestment] = useState<number>(15000);
+  const [monthlyInvestment, setMonthlyInvestment] = useState<number>(0);
   const [expectedReturnRate, setExpectedReturnRate] = useState<number>(12.0);
   const [timeHorizonYears, setTimeHorizonYears] = useState<number>(10);
   const [annualStepUpPct, setAnnualStepUpPct] = useState<number>(10);
-  const [stepUpActive, setStepUpActive] = useState<boolean>(true);
+  const [stepUpActive, setStepUpActive] = useState<boolean>(false);
 
   // Lumpsum inputs
-  const [lumpSumAmount, setLumpSumAmount] = useState<number>(200000);
+  const [lumpSumAmount, setLumpSumAmount] = useState<number>(0);
 
   // Goal Planner inputs
-  const [targetCorpus, setTargetCorpus] = useState<number>(10000000); // e.g. 1 Crore
+  const [targetCorpus, setTargetCorpus] = useState<number>(0);
 
   // Math Calculations:
   // 1. Regular SIP: FV = P * [((1 + i)^n - 1) / i] * (1 + i)
@@ -181,21 +181,22 @@ export const InvestmentPage: React.FC = () => {
                   <input
                     className="w-full px-space-sm py-2.5 bg-surface-container-lowest font-data-mono-md text-on-surface font-semibold focus:outline-none"
                     type="number"
-                    min="500"
-                    max="500000"
+                    min="0"
+                    max="5000000"
                     step="500"
-                    value={monthlyInvestment}
+                    placeholder="Enter monthly SIP amount"
+                    value={monthlyInvestment === 0 ? '' : monthlyInvestment}
                     onChange={e => setMonthlyInvestment(parseFloat(e.target.value) || 0)}
                   />
                 </div>
                 <input
                   type="range"
                   className="w-full accent-primary h-2 bg-surface-container rounded-lg cursor-pointer mt-1"
-                  min="1000"
+                  min="0"
                   max="100000"
                   step="1000"
                   value={monthlyInvestment}
-                  onChange={e => setMonthlyInvestment(parseFloat(e.target.value))}
+                  onChange={e => setMonthlyInvestment(parseFloat(e.target.value) || 0)}
                 />
               </div>
             )}
@@ -218,10 +219,11 @@ export const InvestmentPage: React.FC = () => {
                   <input
                     className="w-full px-space-sm py-2.5 bg-surface-container-lowest font-data-mono-md text-on-surface font-semibold focus:outline-none"
                     type="number"
-                    min="10000"
-                    max="10000000"
-                    step="10000"
-                    value={lumpSumAmount}
+                    min="0"
+                    max="100000000"
+                    step="5000"
+                    placeholder="Enter lumpsum amount"
+                    value={lumpSumAmount === 0 ? '' : lumpSumAmount}
                     onChange={e => setLumpSumAmount(parseFloat(e.target.value) || 0)}
                   />
                 </div>
@@ -246,10 +248,11 @@ export const InvestmentPage: React.FC = () => {
                   <input
                     className="w-full px-space-sm py-2.5 bg-surface-container-lowest font-data-mono-md text-on-surface font-semibold focus:outline-none"
                     type="number"
-                    min="100000"
+                    min="0"
                     max="100000000"
                     step="100000"
-                    value={targetCorpus}
+                    placeholder="Enter target wealth goal"
+                    value={targetCorpus === 0 ? '' : targetCorpus}
                     onChange={e => setTargetCorpus(parseFloat(e.target.value) || 0)}
                   />
                 </div>
