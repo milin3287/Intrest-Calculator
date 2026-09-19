@@ -6,22 +6,24 @@ export const LoanAndEmiPage: React.FC = () => {
 
   // Loan parameters
   const [loanAmount, setLoanAmount] = useState<number>(0);
-  const [interestRate, setInterestRate] = useState<number>(8.75);
-  const [tenureYears, setTenureYears] = useState<number>(15);
+  const [interestRate, setInterestRate] = useState<number>(0);
+  const [tenureYears, setTenureYears] = useState<number>(0);
   const [prepaymentAmount, setPrepaymentAmount] = useState<number>(0); // extra per month
   const [prepaymentActive, setPrepaymentActive] = useState<boolean>(false);
-  const [processingFeePct, setProcessingFeePct] = useState<number>(0.5);
+  const [processingFeePct, setProcessingFeePct] = useState<number>(0);
 
   // EMI Formula: E = P * r * (1 + r)^n / ((1 + r)^n - 1)
-  const monthlyRate = interestRate / 12 / 100;
+  const monthlyRate = interestRate > 0 ? interestRate / 12 / 100 : 0;
   const totalMonths = tenureYears * 12;
 
   let emi = 0;
-  if (monthlyRate > 0 && totalMonths > 0) {
-    emi = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
-      (Math.pow(1 + monthlyRate, totalMonths) - 1);
-  } else if (totalMonths > 0) {
-    emi = loanAmount / totalMonths;
+  if (loanAmount > 0 && totalMonths > 0) {
+    if (monthlyRate > 0) {
+      emi = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
+        (Math.pow(1 + monthlyRate, totalMonths) - 1);
+    } else {
+      emi = loanAmount / totalMonths;
+    }
   }
 
   const standardTotalRepayment = emi * totalMonths;
@@ -200,17 +202,18 @@ export const LoanAndEmiPage: React.FC = () => {
                   Annual Interest Rate (%)
                 </label>
                 <span className="font-label-sm text-label-sm text-secondary">
-                  Monthly: {(interestRate / 12).toFixed(3)}%
+                  Monthly: {interestRate > 0 ? `${(interestRate / 12).toFixed(3)}%` : '—'}
                 </span>
               </div>
               <div className="flex items-center rounded-lg bg-surface-container-lowest overflow-hidden border border-surface-container-high/60 focus-within:ring-2 focus-within:ring-primary">
                 <input
                   className="w-full px-space-sm py-2.5 bg-surface-container-lowest font-data-mono-md text-data-mono-md text-on-surface font-semibold focus:outline-none"
                   type="number"
-                  min="1"
+                  min="0"
                   max="30"
                   step="0.05"
-                  value={interestRate}
+                  placeholder="Enter interest rate %"
+                  value={interestRate === 0 ? '' : interestRate}
                   onChange={e => setInterestRate(parseFloat(e.target.value) || 0)}
                 />
                 <span className="px-space-md py-2.5 bg-surface-container-high text-secondary font-medium text-label-md">
@@ -220,11 +223,11 @@ export const LoanAndEmiPage: React.FC = () => {
               <input
                 type="range"
                 className="w-full accent-primary h-2 bg-surface-container rounded-lg cursor-pointer mt-1"
-                min="4"
+                min="0"
                 max="20"
                 step="0.1"
                 value={interestRate}
-                onChange={e => setInterestRate(parseFloat(e.target.value))}
+                onChange={e => setInterestRate(parseFloat(e.target.value) || 0)}
               />
             </div>
 
@@ -235,25 +238,26 @@ export const LoanAndEmiPage: React.FC = () => {
                   Tenure Horizon
                 </label>
                 <span className="font-data-mono-md text-data-mono-md text-primary font-bold">
-                  {tenureYears} Years ({totalMonths} EMIs)
+                  {tenureYears > 0 ? `${tenureYears} Years (${totalMonths} EMIs)` : 'Enter tenure'}
                 </span>
               </div>
               <div className="flex items-center gap-space-xs">
                 <input
-                  className="w-24 px-space-sm py-2 rounded-lg bg-surface-container-low text-on-surface font-data-mono-md font-semibold text-center border border-surface-container-high/60"
+                  className="w-24 px-space-sm py-2 rounded-lg bg-surface-container-low text-on-surface font-data-mono-md font-semibold text-center border border-surface-container-high/60 focus:outline-none focus:ring-2 focus:ring-primary"
                   type="number"
-                  min="1"
+                  min="0"
                   max="35"
-                  value={tenureYears}
-                  onChange={e => setTenureYears(parseInt(e.target.value, 10) || 1)}
+                  placeholder="0"
+                  value={tenureYears === 0 ? '' : tenureYears}
+                  onChange={e => setTenureYears(parseInt(e.target.value, 10) || 0)}
                 />
                 <input
                   type="range"
                   className="flex-1 accent-primary h-2 bg-surface-container rounded-lg cursor-pointer"
-                  min="1"
+                  min="0"
                   max="30"
                   value={tenureYears}
-                  onChange={e => setTenureYears(parseInt(e.target.value, 10))}
+                  onChange={e => setTenureYears(parseInt(e.target.value, 10) || 0)}
                 />
               </div>
             </div>
@@ -330,7 +334,9 @@ export const LoanAndEmiPage: React.FC = () => {
                   <span className="text-secondary font-label-md text-label-md font-medium">/ month</span>
                 </div>
                 <p className="font-body-sm text-body-sm text-secondary">
-                  Calculated for {totalMonths} monthly payments at {interestRate}% APR
+                  {loanAmount > 0 && interestRate > 0 && tenureYears > 0
+                    ? `Calculated for ${totalMonths} monthly payments at ${interestRate}% APR`
+                    : 'Enter loan amount, interest rate, and tenure to calculate EMI'}
                 </p>
               </div>
 

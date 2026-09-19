@@ -13,6 +13,9 @@ export default defineConfig(() => {
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['icon.svg', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png', 'manifest.json'],
+        workbox: {
+          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        },
         manifest: {
           name: 'MRP Interestly - Financial Math & Precision Interest Calculator',
           short_name: 'MRP Interestly',

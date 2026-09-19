@@ -8,9 +8,9 @@ export const InvestmentPage: React.FC = () => {
 
   // SIP inputs
   const [monthlyInvestment, setMonthlyInvestment] = useState<number>(0);
-  const [expectedReturnRate, setExpectedReturnRate] = useState<number>(12.0);
-  const [timeHorizonYears, setTimeHorizonYears] = useState<number>(10);
-  const [annualStepUpPct, setAnnualStepUpPct] = useState<number>(10);
+  const [expectedReturnRate, setExpectedReturnRate] = useState<number>(0);
+  const [timeHorizonYears, setTimeHorizonYears] = useState<number>(0);
+  const [annualStepUpPct, setAnnualStepUpPct] = useState<number>(0);
   const [stepUpActive, setStepUpActive] = useState<boolean>(false);
 
   // Lumpsum inputs
@@ -21,46 +21,52 @@ export const InvestmentPage: React.FC = () => {
 
   // Math Calculations:
   // 1. Regular SIP: FV = P * [((1 + i)^n - 1) / i] * (1 + i)
-  const i = expectedReturnRate / 12 / 100;
+  const i = expectedReturnRate > 0 ? expectedReturnRate / 12 / 100 : 0;
   const totalMonths = timeHorizonYears * 12;
 
   let totalInvestedAmount = 0;
   let totalFutureValue = 0;
 
   if (investmentType === 'SIP') {
-    if (!stepUpActive || annualStepUpPct === 0) {
-      totalInvestedAmount = monthlyInvestment * totalMonths;
-      if (i > 0) {
-        totalFutureValue = monthlyInvestment * ((Math.pow(1 + i, totalMonths) - 1) / i) * (1 + i);
-      } else {
-        totalFutureValue = totalInvestedAmount;
-      }
-    } else {
-      // Step-Up SIP: monthly investment increases each year by annualStepUpPct
-      let curMonthly = monthlyInvestment;
-      let curCorpus = 0;
-      let totalDeposits = 0;
-
-      for (let yr = 1; yr <= timeHorizonYears; yr++) {
-        for (let m = 1; m <= 12; m++) {
-          totalDeposits += curMonthly;
-          curCorpus = (curCorpus + curMonthly) * (1 + i);
+    if (monthlyInvestment > 0 && timeHorizonYears > 0) {
+      if (!stepUpActive || annualStepUpPct === 0) {
+        totalInvestedAmount = monthlyInvestment * totalMonths;
+        if (i > 0) {
+          totalFutureValue = monthlyInvestment * ((Math.pow(1 + i, totalMonths) - 1) / i) * (1 + i);
+        } else {
+          totalFutureValue = totalInvestedAmount;
         }
-        curMonthly = curMonthly * (1 + annualStepUpPct / 100);
+      } else {
+        // Step-Up SIP: monthly investment increases each year by annualStepUpPct
+        let curMonthly = monthlyInvestment;
+        let curCorpus = 0;
+        let totalDeposits = 0;
+
+        for (let yr = 1; yr <= timeHorizonYears; yr++) {
+          for (let m = 1; m <= 12; m++) {
+            totalDeposits += curMonthly;
+            curCorpus = (curCorpus + curMonthly) * (1 + i);
+          }
+          curMonthly = curMonthly * (1 + annualStepUpPct / 100);
+        }
+        totalInvestedAmount = totalDeposits;
+        totalFutureValue = curCorpus;
       }
-      totalInvestedAmount = totalDeposits;
-      totalFutureValue = curCorpus;
     }
   } else if (investmentType === 'Lumpsum') {
     totalInvestedAmount = lumpSumAmount;
-    totalFutureValue = lumpSumAmount * Math.pow(1 + expectedReturnRate / 100, timeHorizonYears);
+    totalFutureValue = (lumpSumAmount > 0 && timeHorizonYears > 0)
+      ? lumpSumAmount * Math.pow(1 + (expectedReturnRate > 0 ? expectedReturnRate / 100 : 0), timeHorizonYears)
+      : lumpSumAmount;
   } else {
     // Goal Planner: Calculate required monthly SIP to achieve targetCorpus in timeHorizonYears at expectedReturnRate
-    const requiredSip = (i > 0 && totalMonths > 0)
-      ? (targetCorpus * i) / ((Math.pow(1 + i, totalMonths) - 1) * (1 + i))
-      : targetCorpus / (totalMonths || 1);
-    totalInvestedAmount = requiredSip * totalMonths;
-    totalFutureValue = targetCorpus;
+    if (targetCorpus > 0 && timeHorizonYears > 0) {
+      const requiredSip = i > 0
+        ? (targetCorpus * i) / ((Math.pow(1 + i, totalMonths) - 1) * (1 + i))
+        : targetCorpus / totalMonths;
+      totalInvestedAmount = requiredSip * totalMonths;
+      totalFutureValue = targetCorpus;
+    }
   }
 
   const estimatedWealthGain = Math.max(0, totalFutureValue - totalInvestedAmount);
@@ -68,15 +74,17 @@ export const InvestmentPage: React.FC = () => {
 
   // Milestone trajectory points
   const trajectoryMilestones = [];
-  for (let yr = 1; yr <= Math.min(10, timeHorizonYears); yr++) {
-    const fraction = yr / timeHorizonYears;
-    const inv = totalInvestedAmount * fraction;
-    const fv = totalFutureValue * Math.pow(fraction, 1.8);
-    trajectoryMilestones.push({
-      year: `Year ${yr}`,
-      invested: inv,
-      corpus: fv,
-    });
+  if (timeHorizonYears > 0 && totalInvestedAmount > 0) {
+    for (let yr = 1; yr <= Math.min(10, timeHorizonYears); yr++) {
+      const fraction = yr / timeHorizonYears;
+      const inv = totalInvestedAmount * fraction;
+      const fv = totalFutureValue * Math.pow(fraction, 1.8);
+      trajectoryMilestones.push({
+        year: `Year ${yr}`,
+        invested: inv,
+        corpus: fv,
+      });
+    }
   }
 
   const handleSaveInvestment = () => {
@@ -266,17 +274,32 @@ export const InvestmentPage: React.FC = () => {
                   Expected Return Rate (CAGR)
                 </label>
                 <span className="font-label-sm text-label-sm text-primary font-bold">
-                  {expectedReturnRate.toFixed(1)}% p.a.
+                  {expectedReturnRate > 0 ? `${expectedReturnRate.toFixed(1)}% p.a.` : 'Enter return %'}
+                </span>
+              </div>
+              <div className="flex items-center rounded-lg bg-surface-container-lowest overflow-hidden border border-surface-container-high/60 focus-within:ring-2 focus-within:ring-primary">
+                <input
+                  className="w-full px-space-sm py-2 bg-surface-container-lowest font-data-mono-md text-on-surface font-semibold focus:outline-none"
+                  type="number"
+                  min="0"
+                  max="50"
+                  step="0.1"
+                  placeholder="Enter expected return %"
+                  value={expectedReturnRate === 0 ? '' : expectedReturnRate}
+                  onChange={e => setExpectedReturnRate(parseFloat(e.target.value) || 0)}
+                />
+                <span className="px-space-md py-2 bg-surface-container-high text-secondary font-medium text-label-md">
+                  % p.a.
                 </span>
               </div>
               <input
                 type="range"
                 className="w-full accent-primary h-2 bg-surface-container rounded-lg cursor-pointer"
-                min="4"
+                min="0"
                 max="25"
                 step="0.5"
                 value={expectedReturnRate}
-                onChange={e => setExpectedReturnRate(parseFloat(e.target.value))}
+                onChange={e => setExpectedReturnRate(parseFloat(e.target.value) || 0)}
               />
               <div className="flex items-center gap-space-2xs pt-1 flex-wrap">
                 {[8, 10, 12, 14, 16].map(r => (
@@ -299,16 +322,31 @@ export const InvestmentPage: React.FC = () => {
                   Investment Horizon
                 </label>
                 <span className="font-data-mono-md text-data-mono-md text-on-surface font-bold">
-                  {timeHorizonYears} Years
+                  {timeHorizonYears > 0 ? `${timeHorizonYears} Years` : 'Enter years'}
+                </span>
+              </div>
+              <div className="flex items-center rounded-lg bg-surface-container-lowest overflow-hidden border border-surface-container-high/60 focus-within:ring-2 focus-within:ring-primary">
+                <input
+                  className="w-full px-space-sm py-2 bg-surface-container-lowest font-data-mono-md text-on-surface font-semibold focus:outline-none"
+                  type="number"
+                  min="0"
+                  max="40"
+                  step="1"
+                  placeholder="Enter duration in years"
+                  value={timeHorizonYears === 0 ? '' : timeHorizonYears}
+                  onChange={e => setTimeHorizonYears(parseInt(e.target.value, 10) || 0)}
+                />
+                <span className="px-space-md py-2 bg-surface-container-high text-secondary font-medium text-label-md">
+                  Years
                 </span>
               </div>
               <input
                 type="range"
                 className="w-full accent-primary h-2 bg-surface-container rounded-lg cursor-pointer"
-                min="1"
+                min="0"
                 max="35"
                 value={timeHorizonYears}
-                onChange={e => setTimeHorizonYears(parseInt(e.target.value, 10))}
+                onChange={e => setTimeHorizonYears(parseInt(e.target.value, 10) || 0)}
               />
             </div>
 
@@ -342,7 +380,17 @@ export const InvestmentPage: React.FC = () => {
                 {stepUpActive && (
                   <div className="flex items-center justify-between gap-space-sm pt-space-2xs border-t border-surface-container-high/40">
                     <span className="font-body-sm text-body-sm text-secondary">Annual Increment:</span>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        placeholder="0"
+                        value={annualStepUpPct === 0 ? '' : annualStepUpPct}
+                        onChange={e => setAnnualStepUpPct(parseFloat(e.target.value) || 0)}
+                        className="w-16 px-2 py-1 text-center font-semibold rounded bg-surface-container border border-surface-container-high/60 text-on-surface text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <span className="text-secondary text-sm font-semibold">%</span>
                       {[5, 10, 15].map(pct => (
                         <button
                           key={pct}
@@ -380,7 +428,9 @@ export const InvestmentPage: React.FC = () => {
                   </span>
                 </div>
                 <p className="font-body-sm text-body-sm text-secondary">
-                  Compounded over {timeHorizonYears} years at {expectedReturnRate}% annualized CAGR
+                  {timeHorizonYears > 0 && expectedReturnRate > 0
+                    ? `Compounded over ${timeHorizonYears} years at ${expectedReturnRate}% annualized CAGR`
+                    : 'Enter contribution, expected return, and time horizon to evaluate corpus'}
                 </p>
               </div>
               <div className="flex flex-col items-start md:items-end gap-1 shrink-0">

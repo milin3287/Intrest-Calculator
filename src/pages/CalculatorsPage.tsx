@@ -17,8 +17,8 @@ export const CalculatorsPage: React.FC = () => {
 
   // Primary Workspace Parameters
   const [principal, setPrincipal] = useState<number>(0);
-  const [rate, setRate] = useState<number>(8.5);
-  const [tenureYears, setTenureYears] = useState<number>(5);
+  const [rate, setRate] = useState<number>(0);
+  const [tenureYears, setTenureYears] = useState<number>(0);
   const [tenureUnit, setTenureUnit] = useState<'Years' | 'Months' | 'Days'>('Years');
   const [frequency, setFrequency] = useState<number>(4); // 12=monthly, 4=quarterly, 2=semi, 1=annual
 
@@ -27,9 +27,9 @@ export const CalculatorsPage: React.FC = () => {
   const [periodicAdditionsActive, setPeriodicAdditionsActive] = useState<boolean>(false);
   const [periodicMonthlyAmount, setPeriodicMonthlyAmount] = useState<number>(0);
   const [inflationActive, setInflationActive] = useState<boolean>(false);
-  const [inflationRate, setInflationRate] = useState<number>(5.5);
+  const [inflationRate, setInflationRate] = useState<number>(0);
   const [ltcgTaxActive, setLtcgTaxActive] = useState<boolean>(false);
-  const [ltcgRate, setLtcgRate] = useState<number>(10.0);
+  const [ltcgRate, setLtcgRate] = useState<number>(0);
 
   // Amortization Schedule Modal
   const [showScheduleModal, setShowScheduleModal] = useState<boolean>(false);
@@ -41,7 +41,7 @@ export const CalculatorsPage: React.FC = () => {
 
   const adjustRate = (delta: number) => {
     setRate(prev => {
-      const next = Math.min(30, Math.max(1, prev + delta));
+      const next = Math.max(0, Math.min(30, prev + delta));
       return parseFloat(next.toFixed(2));
     });
   };
@@ -396,7 +396,7 @@ export const CalculatorsPage: React.FC = () => {
                   Annual Nominal Rate (r)
                 </label>
                 <span className="font-label-sm text-label-sm text-primary font-semibold bg-primary-fixed px-space-xs py-0.5 rounded">
-                  Benchmark: 8.5% p.a.
+                  {rate > 0 ? `${rate}% p.a.` : 'Enter Rate %'}
                 </span>
               </div>
               <div className="grid grid-cols-12 gap-space-xs items-center">
@@ -405,10 +405,11 @@ export const CalculatorsPage: React.FC = () => {
                     className="w-full px-space-sm py-2 bg-surface-container-lowest font-data-mono-md text-data-mono-md text-on-surface font-semibold focus:outline-none"
                     id="rate-input"
                     max="30"
-                    min="1"
+                    min="0"
                     step="0.1"
                     type="number"
-                    value={rate}
+                    placeholder="Enter interest rate %"
+                    value={rate === 0 ? '' : rate}
                     onChange={e => setRate(parseFloat(e.target.value) || 0)}
                   />
                   <span className="px-space-sm py-2 bg-surface-container-high text-secondary font-label-md text-label-md font-medium">
@@ -437,11 +438,11 @@ export const CalculatorsPage: React.FC = () => {
               <input
                 className="w-full accent-primary h-2 bg-surface-container rounded-lg cursor-pointer"
                 max="25"
-                min="1"
+                min="0"
                 step="0.1"
                 type="range"
                 value={rate}
-                onChange={e => setRate(parseFloat(e.target.value))}
+                onChange={e => setRate(parseFloat(e.target.value) || 0)}
               />
             </div>
 
@@ -473,18 +474,19 @@ export const CalculatorsPage: React.FC = () => {
                   className="w-24 px-space-sm py-2 rounded-lg bg-surface-container-low text-on-surface font-data-mono-md text-data-mono-md font-semibold text-center border border-surface-container-high/60 focus:ring-2 focus:ring-primary focus:outline-none"
                   id="tenure-input"
                   max="40"
-                  min="1"
+                  min="0"
                   type="number"
-                  value={tenureYears}
-                  onChange={e => setTenureYears(parseInt(e.target.value, 10) || 1)}
+                  placeholder="0"
+                  value={tenureYears === 0 ? '' : tenureYears}
+                  onChange={e => setTenureYears(parseInt(e.target.value, 10) || 0)}
                 />
                 <input
                   className="flex-1 accent-primary h-2 bg-surface-container rounded-lg cursor-pointer"
                   max="30"
-                  min="1"
+                  min="0"
                   type="range"
                   value={tenureYears}
-                  onChange={e => setTenureYears(parseInt(e.target.value, 10))}
+                  onChange={e => setTenureYears(parseInt(e.target.value, 10) || 0)}
                 />
                 <span className="font-data-mono-md text-data-mono-md text-secondary font-medium w-16 text-right">
                   {tenureYears} {tenureUnit === 'Years' ? 'Yrs' : tenureUnit === 'Months' ? 'Mo' : 'Days'}
@@ -669,11 +671,13 @@ export const CalculatorsPage: React.FC = () => {
               <button
                 onClick={() => {
                   setPrincipal(0);
-                  setRate(8.5);
-                  setTenureYears(5);
+                  setRate(0);
+                  setTenureYears(0);
                   setFrequency(4);
                   setPeriodicMonthlyAmount(0);
                   setPeriodicAdditionsActive(false);
+                  setInflationActive(false);
+                  setLtcgTaxActive(false);
                   triggerToast('Workspace cleared.');
                 }}
                 className="w-full sm:w-11 h-11 rounded-lg bg-surface-container-low hover:bg-surface-container text-secondary hover:text-error flex items-center justify-center transition-colors border border-surface-container-high/40"
@@ -735,7 +739,9 @@ export const CalculatorsPage: React.FC = () => {
                   </span>
                 </div>
                 <p className="font-body-sm text-body-sm text-secondary">
-                  Estimated maturity value after {tenureYears}.0 years with reinvested yields
+                  {tenureYears > 0
+                    ? `Estimated maturity value after ${tenureYears}.0 years with reinvested yields`
+                    : 'Enter principal, rate, and tenure to calculate maturity corpus'}
                 </p>
               </div>
               <div className="flex flex-col items-start md:items-end gap-1 shrink-0">
@@ -744,7 +750,7 @@ export const CalculatorsPage: React.FC = () => {
                   +{totalRoi.toFixed(1)}% Total ROI
                 </span>
                 <span className="font-body-sm text-body-sm text-outline font-medium">
-                  Realised annualized CAGR: {cagr.toFixed(2)}%
+                  {cagr > 0 ? `Realised annualized CAGR: ${cagr.toFixed(2)}%` : 'Realised annualized CAGR: —'}
                 </span>
               </div>
             </div>

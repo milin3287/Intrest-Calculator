@@ -1,0 +1,95 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with identification details",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid"]
+    },
+    "DateLedgerSlot": {
+      "title": "DateLedgerSlot",
+      "description": "Custom date-to-date ledger slot with cash flow items and interest computations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "rate": { "type": "number" },
+        "rateType": { "type": "string" },
+        "compoundingMethod": { "type": "string" },
+        "dayCountBasis": { "type": "number" },
+        "asOfDate": { "type": "string" },
+        "userRole": { "type": "string" },
+        "netPrincipal": { "type": "number" },
+        "accruedInterest": { "type": "number" },
+        "grandSettlement": { "type": "number" }
+      },
+      "required": ["id", "userId", "createdAt"]
+    },
+    "MonthlyBook": {
+      "title": "MonthlyBook",
+      "description": "Monthly passbook accounting records with interest accruals",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "monthKey": { "type": "string" },
+        "monthTitle": { "type": "string" },
+        "bookTitle": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" },
+        "rate": { "type": "number" },
+        "netPrincipal": { "type": "number" },
+        "accruedInterest": { "type": "number" },
+        "grandSettlement": { "type": "number" }
+      },
+      "required": ["id", "userId", "monthKey"]
+    },
+    "CalculationAudit": {
+      "title": "CalculationAudit",
+      "description": "Calculations saved to user history",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "category": { "type": "string" },
+        "title": { "type": "string" },
+        "principal": { "type": "number" },
+        "rate": { "type": "number" },
+        "resultValue": { "type": "number" },
+        "resultFormatted": { "type": "string" },
+        "formula": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "userId", "category", "title"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Stores user account profile information"
+    },
+    "/users/{userId}/dateLedgerSlots/{slotId}": {
+      "schema": { "$ref": "#/entities/DateLedgerSlot" },
+      "description": "Stores date-to-date calculation slots belonging to the user"
+    },
+    "/users/{userId}/monthlyBooks/{bookId}": {
+      "schema": { "$ref": "#/entities/MonthlyBook" },
+      "description": "Stores monthly ledger passbooks belonging to the user"
+    },
+    "/users/{userId}/calculationAudits/{auditId}": {
+      "schema": { "$ref": "#/entities/CalculationAudit" },
+      "description": "Stores calculation history logs belonging to the user"
+    }
+  }
+}

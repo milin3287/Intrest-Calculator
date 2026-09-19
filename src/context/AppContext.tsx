@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { PagePath, CurrencyCode, CurrencyConfig, CalculationAuditItem } from '../types';
+import { saveRecord, getAllRecords, deleteRecord } from '../services/firebaseSync';
 
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
   INR: { code: 'INR', symbol: '₹', label: 'INR ₹', rateAgainstINR: 1 },
@@ -53,6 +54,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     return 'light';
   });
+
   const [history, setHistory] = useState<CalculationAuditItem[]>(() => {
     try {
       const saved = localStorage.getItem('interestly_audit_history');
@@ -61,7 +63,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(parsed)) {
           const cleaned = parsed.filter(
             (item: CalculationAuditItem) =>
-              !['AUD-8921', 'AUD-8920', 'AUD-8919', 'AUD-8918'].includes(item.id)
+              !['AUD-8921', 'AUD-8920', 'AUD-8918'].includes(item.id)
           );
           return cleaned;
         }
@@ -71,92 +73,124 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
     return INITIAL_HISTORY;
   });
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [activeCalculatorTab, setActiveCalculatorTab] = useState<string>('Compound Interest');
   const [formulaDrawerOpen, setFormulaDrawerOpen] = useState<boolean>(false);
 
+  // Sync calculations from Firestore table on initial load
+  useEffect(() => {
+    getAllRecords<CalculationAuditItem>('calculation_history')
+      .then((records) => {
+        if (records && records.length > 0) {
+          // Exclude internal setup flags
+          const validRecords = records.filter(
+            (r) => r.id !== 'INIT_CONFIG' && r.title && r.category
+          );
+          if (validRecords.length > 0) {
+            setHistory((prev) => {
+              const existingIds = new Set(prev.map((p) => p.id));
+              const fresh = validRecords.filter((v) => !existingIds.has(v.id));
+              return [...fresh, ...prev];
+            });
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn('Firestore calculations sync note:', err);
+      });
+  }, []);
+
   useEffect(() => {
     try {
       localStorage.setItem('interestly_audit_history', JSON.stringify(history));
-    } catch {
-      // ignore
+    } catch (e) {
+      console.error('Failed to save audit history to localStorage', e);
     }
   }, [history]);
 
   useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
     try {
       localStorage.setItem('interestly_theme', theme);
     } catch {
       // ignore
     }
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
   }, [theme]);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === 'light' ? 'dark' : 'light'));
-    triggerToast(theme === 'light' ? 'Switched to Dark theme.' : 'Switched to Light theme.');
   };
 
   const setCurrency = (curr: CurrencyCode) => {
     setCurrencyState(curr);
-    triggerToast(`Currency base set to ${CURRENCIES[curr].label}`);
+    triggerToast(`Currency changed to ${curr} (${CURRENCIES[curr].symbol})`);
+  };
+
+  const currencyConfig = CURRENCIES[currency];
+
+  const formatMoney = (valInINR: number, decimalPlaces = 2): string => {
+    if (valInINR === undefined || valInINR === null || isNaN(valInINR)) return '0.00';
+    const converted = valInINR * currencyConfig.rateAgainstINR;
+
+    const parts = converted.toFixed(decimalPlaces).split('.');
+    let integerPart = parts[0];
+    const decimalPart = parts.length > 1 ? '.' + parts[1] : '';
+
+    if (currency === 'INR') {
+      const isNegative = integerPart.startsWith('-');
+      if (isNegative) integerPart = integerPart.slice(1);
+      const lastThree = integerPart.slice(-3);
+      const otherNumbers = integerPart.slice(0, -3);
+      const formatted = otherNumbers !== ''
+        ? otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + lastThree
+        : lastThree;
+      return `${isNegative ? '-' : ''}${currencyConfig.symbol}${formatted}${decimalPart}`;
+    }
+
+    return `${currencyConfig.symbol}${converted.toLocaleString('en-US', {
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces,
+    })}`;
+  };
+
+  const formatMoneyCompact = (valInINR: number): string => {
+    if (valInINR === undefined || valInINR === null || isNaN(valInINR)) return '0';
+    const converted = valInINR * currencyConfig.rateAgainstINR;
+
+    if (currency === 'INR') {
+      if (Math.abs(converted) >= 1e7) {
+        return `${currencyConfig.symbol}${(converted / 1e7).toFixed(2)} Cr`;
+      }
+      if (Math.abs(converted) >= 1e5) {
+        return `${currencyConfig.symbol}${(converted / 1e5).toFixed(2)} Lakh`;
+      }
+      if (Math.abs(converted) >= 1e3) {
+        return `${currencyConfig.symbol}${(converted / 1e3).toFixed(1)}k`;
+      }
+      return `${currencyConfig.symbol}${converted.toFixed(0)}`;
+    }
+
+    if (Math.abs(converted) >= 1e9) {
+      return `${currencyConfig.symbol}${(converted / 1e9).toFixed(2)}B`;
+    }
+    if (Math.abs(converted) >= 1e6) {
+      return `${currencyConfig.symbol}${(converted / 1e6).toFixed(2)}M`;
+    }
+    if (Math.abs(converted) >= 1e3) {
+      return `${currencyConfig.symbol}${(converted / 1e3).toFixed(1)}k`;
+    }
+    return `${currencyConfig.symbol}${converted.toFixed(0)}`;
   };
 
   const navigateTo = (path: PagePath) => {
     setCurrentPath(path);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const currencyConfig = CURRENCIES[currency];
-
-  const formatMoney = (valInINR: number, decimalPlaces = 0): string => {
-    if (isNaN(valInINR)) return `${currencyConfig.symbol}0`;
-    const converted = valInINR * currencyConfig.rateAgainstINR;
-    if (currency === 'INR') {
-      return (
-        currencyConfig.symbol +
-        Math.round(converted).toLocaleString('en-IN', {
-          minimumFractionDigits: decimalPlaces,
-          maximumFractionDigits: decimalPlaces,
-        })
-      );
-    }
-    return (
-      currencyConfig.symbol +
-      converted.toLocaleString('en-US', {
-        minimumFractionDigits: decimalPlaces,
-        maximumFractionDigits: decimalPlaces,
-      })
-    );
-  };
-
-  const formatMoneyCompact = (valInINR: number): string => {
-    if (isNaN(valInINR)) return `${currencyConfig.symbol}0`;
-    const converted = valInINR * currencyConfig.rateAgainstINR;
-    if (currency === 'INR') {
-      if (Math.abs(converted) >= 10000000) {
-        return `${currencyConfig.symbol}${(converted / 10000000).toFixed(2)} Cr`;
-      }
-      if (Math.abs(converted) >= 100000) {
-        return `${currencyConfig.symbol}${(converted / 100000).toFixed(1)} L`;
-      }
-      if (Math.abs(converted) >= 1000) {
-        return `${currencyConfig.symbol}${(converted / 1000).toFixed(0)}K`;
-      }
-      return `${currencyConfig.symbol}${Math.round(converted).toLocaleString('en-IN')}`;
-    }
-
-    if (Math.abs(converted) >= 1000000) {
-      return `${currencyConfig.symbol}${(converted / 1000000).toFixed(2)}M`;
-    }
-    if (Math.abs(converted) >= 1000) {
-      return `${currencyConfig.symbol}${(converted / 1000).toFixed(1)}K`;
-    }
-    return `${currencyConfig.symbol}${Math.round(converted).toLocaleString('en-US')}`;
   };
 
   const triggerToast = (msg: string) => {
@@ -171,11 +205,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     setHistory(prev => [newItem, ...prev]);
     triggerToast('Calculation state logged to audit ledger.');
+
+    // Save directly to Firestore database table
+    saveRecord('calculation_history', newItem.id, {
+      ...newItem,
+      createdAt: new Date().toISOString(),
+    }).catch((err) => {
+      console.warn('Failed to save calculation to Firestore:', err);
+    });
   };
 
   const deleteHistoryItem = (id: string) => {
     setHistory(prev => prev.filter(item => item.id !== id));
     triggerToast('Calculation record purged from local audit ledger.');
+
+    // Remove directly from Firestore database table
+    deleteRecord('calculation_history', id).catch((err) => {
+      console.warn('Failed to delete calculation from Firestore:', err);
+    });
   };
 
   const clearHistory = () => {

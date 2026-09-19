@@ -239,7 +239,7 @@ export const AdvancedSolverPage: React.FC = () => {
                   Variable Detection HUD
                 </span>
                 <span className="px-space-xs py-space-2xs rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm font-semibold">
-                  5 variables bound
+                  {hasData ? 'Variables bound' : 'Awaiting prompt input'}
                 </span>
               </div>
 
@@ -248,30 +248,36 @@ export const AdvancedSolverPage: React.FC = () => {
                   <div className="flex flex-col">
                     <span className="font-label-sm text-label-sm text-secondary">Principal (P)</span>
                     <span className="font-data-mono-md text-data-mono-md text-on-surface font-semibold">
-                      {formatMoney(pVal)}
+                      {pVal > 0 ? formatMoney(pVal) : 'Not specified'}
                     </span>
                   </div>
-                  <span className="material-symbols-outlined text-[18px] text-primary">check_circle</span>
+                  <span className={`material-symbols-outlined text-[18px] ${pVal > 0 ? 'text-primary' : 'text-outline'}`}>
+                    {pVal > 0 ? 'check_circle' : 'pending'}
+                  </span>
                 </div>
 
                 <div className="p-space-xs rounded-lg bg-surface-container-lowest flex items-center justify-between shadow-sm border border-surface-container-high/30">
                   <div className="flex flex-col">
                     <span className="font-label-sm text-label-sm text-secondary">Nominal Rate (r)</span>
                     <span className="font-data-mono-md text-data-mono-md text-on-surface font-semibold">
-                      {rVal.toFixed(1)}% / year
+                      {rVal > 0 ? `${rVal.toFixed(1)}% / year` : 'Not specified'}
                     </span>
                   </div>
-                  <span className="material-symbols-outlined text-[18px] text-primary">check_circle</span>
+                  <span className={`material-symbols-outlined text-[18px] ${rVal > 0 ? 'text-primary' : 'text-outline'}`}>
+                    {rVal > 0 ? 'check_circle' : 'pending'}
+                  </span>
                 </div>
 
                 <div className="p-space-xs rounded-lg bg-surface-container-lowest flex items-center justify-between shadow-sm border border-surface-container-high/30">
                   <div className="flex flex-col">
                     <span className="font-label-sm text-label-sm text-secondary">Tenure (t)</span>
                     <span className="font-data-mono-md text-data-mono-md text-on-surface font-semibold">
-                      {tVal.toFixed(1)} Years
+                      {tVal > 0 ? `${tVal.toFixed(1)} Years` : 'Not specified'}
                     </span>
                   </div>
-                  <span className="material-symbols-outlined text-[18px] text-primary">check_circle</span>
+                  <span className={`material-symbols-outlined text-[18px] ${tVal > 0 ? 'text-primary' : 'text-outline'}`}>
+                    {tVal > 0 ? 'check_circle' : 'pending'}
+                  </span>
                 </div>
 
                 <div className="p-space-xs rounded-lg bg-surface-container-lowest flex items-center justify-between shadow-sm border border-surface-container-high/30">
@@ -281,7 +287,9 @@ export const AdvancedSolverPage: React.FC = () => {
                       {nVal} ({nVal === 4 ? 'Quarterly' : nVal === 12 ? 'Monthly' : nVal === 1 ? 'Annually' : 'Periodic'})
                     </span>
                   </div>
-                  <span className="material-symbols-outlined text-[18px] text-primary">check_circle</span>
+                  <span className={`material-symbols-outlined text-[18px] ${hasData ? 'text-primary' : 'text-outline'}`}>
+                    {hasData ? 'check_circle' : 'pending'}
+                  </span>
                 </div>
               </div>
 
@@ -291,7 +299,7 @@ export const AdvancedSolverPage: React.FC = () => {
                     Target Unknowns Identified
                   </span>
                   <span className="font-body-sm text-body-sm text-on-surface">
-                    Maturity (A), Net Compound Yield (CI), Effective Yield (EAR)
+                    {hasData ? 'Maturity (A), Net Compound Yield (CI), Effective Yield (EAR)' : 'Waiting for financial parameters...'}
                   </span>
                 </div>
                 <span className="material-symbols-outlined text-[18px] text-tertiary">tune</span>
@@ -309,7 +317,12 @@ export const AdvancedSolverPage: React.FC = () => {
                 <span>Solve Step-by-Step</span>
               </button>
               <button
-                onClick={() => setPromptText('')}
+                onClick={() => {
+                  setPromptText('');
+                  setPVal(0);
+                  setRVal(0);
+                  setTVal(0);
+                }}
                 className="h-11 px-space-md rounded-xl bg-surface-container-low text-on-surface font-label-md text-label-md font-medium hover:bg-surface-container transition-colors flex items-center justify-center gap-space-2xs border border-surface-container-high/40"
                 type="button"
               >

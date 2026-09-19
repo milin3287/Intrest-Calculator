@@ -13,7 +13,15 @@ interface NavSubItem {
 }
 
 export const Header: React.FC = () => {
-  const { currentPath, navigateTo, currency, setCurrency, theme, toggleTheme, history } = useApp();
+  const {
+    currentPath,
+    navigateTo,
+    currency,
+    setCurrency,
+    theme,
+    toggleTheme,
+    history,
+  } = useApp();
 
   // Dropdown states
   const [calcDropdownOpen, setCalcDropdownOpen] = useState(false);

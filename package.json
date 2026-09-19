@@ -17,6 +17,7 @@
     "canvas-confetti": "^1.9.4",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "firebase": "^12.19.0",
     "gsap": "^3.15.0",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",

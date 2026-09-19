@@ -1,5 +1,6 @@
 import { DateCashFlowItem, DateLedgerSlot, MonthlyLedgerBook, MonthlyStatementBucket } from '../types';
 import { calculateDateLedger } from './dateLedgerEngine';
+import { saveRecord, deleteRecord, getAllRecords } from '../services/firebaseSync';
 
 const ACTIVE_LEDGER_KEY = 'interestly_active_custom_date_ledger';
 const SLOTS_STORAGE_KEY = 'interestly_date_ledger_slots';
@@ -18,7 +19,7 @@ export interface ActiveLedgerState {
 
 const DEFAULT_ACTIVE_LEDGER: ActiveLedgerState = {
   transactions: [],
-  rate: 12.0,
+  rate: 0,
   rateType: 'annual',
   compoundingMethod: 'simple',
   dayCountBasis: 365,
@@ -42,8 +43,11 @@ export function getActiveLedger(): ActiveLedgerState {
             !tx.id?.startsWith('tx-init-') &&
             !tx.note?.includes('Initial Capital Tranche')
         );
+        // If it was the legacy default of 12.0 without user transactions, reset to 0
+        const effectiveRate = (parsed.rate === 12.0 && cleanedTransactions.length === 0) ? 0 : (parsed.rate ?? 0);
         return {
           ...parsed,
+          rate: effectiveRate,
           transactions: cleanedTransactions,
         };
       }
@@ -99,6 +103,15 @@ function saveLedgerSlots(slots: DateLedgerSlot[]): void {
     // Keep up to 120 most recent versioned slots to avoid quota overflow
     const trimmed = slots.slice(0, 120);
     localStorage.setItem(SLOTS_STORAGE_KEY, JSON.stringify(trimmed));
+
+    // Save top slot to Firestore date_ledger_slots
+    if (trimmed.length > 0) {
+      const top = trimmed[0];
+      saveRecord('date_ledger_slots', top.id, {
+        ...top,
+        updatedAt: new Date().toISOString(),
+      }).catch((err) => console.warn('Firestore slot sync notice:', err));
+    }
   } catch (err) {
     console.error('Failed to save slots:', err);
   }
@@ -201,6 +214,7 @@ export function recordLedgerSlot(params: {
 export function deleteLedgerSlot(id: string): DateLedgerSlot[] {
   const slots = getLedgerSlots().filter(s => s.id !== id);
   saveLedgerSlots(slots);
+  deleteRecord('date_ledger_slots', id).catch((err) => console.warn('Firestore slot delete notice:', err));
   return slots;
 }
 
@@ -250,6 +264,13 @@ export function getMonthlyBooks(): MonthlyLedgerBook[] {
 export function saveMonthlyBooks(books: MonthlyLedgerBook[]): void {
   try {
     localStorage.setItem(MONTHLY_BOOKS_KEY, JSON.stringify(books));
+    // Sync latest books to Firestore monthly_books
+    for (const book of books.slice(0, 20)) {
+      saveRecord('monthly_books', book.id, {
+        ...book,
+        updatedAt: new Date().toISOString(),
+      }).catch((err) => console.warn('Firestore monthly book sync notice:', err));
+    }
   } catch (err) {
     console.error('Failed to save monthly books:', err);
   }
@@ -295,6 +316,7 @@ export function saveOrUpdateMonthlyBook(book: Omit<MonthlyLedgerBook, 'id' | 'cr
 export function deleteMonthlyBook(id: string): MonthlyLedgerBook[] {
   const updated = getMonthlyBooks().filter(b => b.id !== id);
   saveMonthlyBooks(updated);
+  deleteRecord('monthly_books', id).catch((err) => console.warn('Firestore book delete notice:', err));
   return updated;
 }
 

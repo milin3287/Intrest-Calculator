@@ -137,7 +137,7 @@ export const DateLedgerPage: React.FC = () => {
 
   // Quick rate adjust
   const adjustRate = (delta: number) => {
-    const next = Math.max(0.1, Math.min(100, rate + delta));
+    const next = Math.max(0, Math.min(100, rate + delta));
     const cleanRate = parseFloat(next.toFixed(2));
     setRate(cleanRate);
     createSnapshotSlot('auto_change', `Adjusted interest rate to ${cleanRate}%`, transactions, cleanRate);
@@ -205,145 +205,6 @@ export const DateLedgerPage: React.FC = () => {
     setTransactions(nextTxs);
     createSnapshotSlot('auto_change', 'Sorted transactions chronologically', nextTxs);
     triggerToast('Transactions sorted chronologically by date.');
-  };
-
-  // Presets
-  const loadUserExamplePreset = () => {
-    const t0 = formatDateISO(new Date());
-    const presetTxs: DateCashFlowItem[] = [
-      {
-        id: `tx-${Date.now()}-1`,
-        date: t0,
-        type: 'credit',
-        amount: 10000,
-        note: 'First receipt (₹10,000 today)',
-      },
-      {
-        id: `tx-${Date.now()}-2`,
-        date: addDays(t0, 7),
-        type: 'credit',
-        amount: 10000,
-        note: 'Second receipt after 1 week (₹10,000)',
-      },
-      {
-        id: `tx-${Date.now()}-3`,
-        date: addDays(t0, 25),
-        type: 'debit',
-        amount: 5000,
-        note: 'Someone took from me / partial payback (₹5,000)',
-      },
-    ];
-    setTransactions(presetTxs);
-    const targetDate = addDays(t0, 45);
-    setAsOfDate(targetDate);
-    createSnapshotSlot('preset', 'Loaded request scenario (10k today + 10k in 1 wk - 5k taken)', presetTxs, rate, targetDate);
-    triggerToast('Loaded your exact scenario preset & saved to slot!');
-  };
-
-  const loadPeerLoanPreset = () => {
-    const t0 = formatDateISO(new Date());
-    const presetTxs: DateCashFlowItem[] = [
-      {
-        id: `tx-${Date.now()}-1`,
-        date: t0,
-        type: 'credit',
-        amount: 50000,
-        note: 'Initial borrowed amount',
-      },
-      {
-        id: `tx-${Date.now()}-2`,
-        date: addDays(t0, 15),
-        type: 'debit',
-        amount: 10000,
-        note: 'First partial installment paid',
-      },
-      {
-        id: `tx-${Date.now()}-3`,
-        date: addDays(t0, 30),
-        type: 'credit',
-        amount: 25000,
-        note: 'Additional emergency credit requested',
-      },
-      {
-        id: `tx-${Date.now()}-4`,
-        date: addDays(t0, 60),
-        type: 'debit',
-        amount: 20000,
-        note: 'Second repayment',
-      },
-    ];
-    setTransactions(presetTxs);
-    const targetDate = addDays(t0, 90);
-    setAsOfDate(targetDate);
-    createSnapshotSlot('preset', 'Loaded Peer-to-Peer Multi-Tranche loan preset', presetTxs, rate, targetDate);
-    triggerToast('Loaded Peer-to-Peer Multi-Tranche loan preset & saved in slot.');
-  };
-
-  const loadMonthlyInterestPreset = () => {
-    const t0 = formatDateISO(new Date());
-    const presetTxs: DateCashFlowItem[] = [
-      {
-        id: `tx-${Date.now()}-1`,
-        date: t0,
-        type: 'credit',
-        amount: 100000,
-        note: 'Principal credit',
-      },
-      {
-        id: `tx-${Date.now()}-2`,
-        date: addDays(t0, 45),
-        type: 'debit',
-        amount: 25000,
-        note: 'Interim withdrawal / settlement',
-      },
-    ];
-    setTransactions(presetTxs);
-    setRate(2.0); // 2% per month
-    setRateType('monthly');
-    const targetDate = addDays(t0, 90);
-    setAsOfDate(targetDate);
-    createSnapshotSlot('preset', 'Loaded 2% Monthly Interest preset', presetTxs, 2.0, targetDate);
-    triggerToast('Loaded 2% Monthly Interest preset & saved in slot.');
-  };
-
-  const loadHighCapitalCrorePreset = () => {
-    const t0 = formatDateISO(new Date());
-    const presetTxs: DateCashFlowItem[] = [
-      {
-        id: `tx-${Date.now()}-1`,
-        date: t0,
-        type: 'credit',
-        amount: 10000000, // 10,000,000 Rs (1 Crore)
-        note: 'Tranche 1: Initial capital receipt (₹1,00,00,000 / 1 Crore)',
-      },
-      {
-        id: `tx-${Date.now()}-2`,
-        date: addDays(t0, 14),
-        type: 'credit',
-        amount: 5000000, // 5,000,000 Rs (50 Lakh)
-        note: 'Tranche 2: Additional capital receipt after 2 wks (₹50,00,000 / 50 Lakh)',
-      },
-      {
-        id: `tx-${Date.now()}-3`,
-        date: addDays(t0, 30),
-        type: 'credit',
-        amount: 10000000, // 10,000,000 Rs (1 Crore)
-        note: 'Tranche 3: Third tranche after 1 month (₹1,00,00,000 / 1 Crore)',
-      },
-      {
-        id: `tx-${Date.now()}-4`,
-        date: addDays(t0, 60),
-        type: 'debit',
-        amount: 7500000, // 7,500,000 Rs (75 Lakh)
-        note: 'Partial repayment / Partner withdrawal (₹75,00,000 / 75 Lakh)',
-      },
-    ];
-    setTransactions(presetTxs);
-    const targetDate = addDays(t0, 90);
-    setAsOfDate(targetDate);
-    setNewAmount(10000000);
-    createSnapshotSlot('preset', 'Loaded High Capital ₹10,000,000+ (1 Crore+) Tranche preset', presetTxs, rate, targetDate);
-    triggerToast('Loaded High Capital ₹10,000,000+ (1 Crore+) Tranche preset & saved in slot!');
   };
 
   // Slot modal handlers
@@ -490,23 +351,11 @@ export const DateLedgerPage: React.FC = () => {
   return (
     <div className="flex flex-col w-full space-y-space-lg">
       {/* Top Banner & Context */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-space-2xs text-secondary font-label-md text-label-md">
-            <span>Calculators</span>
-            <span className="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
-            <span className="text-on-surface font-semibold">Custom Dates &amp; Running Ledger</span>
-            <span className="ml-space-2xs px-space-xs py-0.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm uppercase tracking-wider font-semibold">
-              Date-Wise Engine
-            </span>
-          </div>
-          <h1 className="font-headline-lg text-headline-lg text-on-surface font-extrabold tracking-tight">
-            Date-to-Date Cash Flow &amp; Interest Ledger
-          </h1>
-          <p className="text-secondary font-body-md text-body-md max-w-3xl">
-            Select exact calendar dates for multiple staggered receipts (e.g. 10,000 today, 10,000 next week) and withdrawals.
-            Our daily accrual engine tracks exact elapsed days and calculates running principal with compound or simple interest.
-          </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+        <div className="flex items-center gap-space-2xs text-secondary font-label-md text-label-md">
+          <span>Calculators</span>
+          <span className="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
+          <span className="text-on-surface font-semibold">Custom Dates &amp; Running Ledger</span>
         </div>
 
         {/* Action Buttons */}
@@ -620,53 +469,6 @@ export const DateLedgerPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Quick Scenario Presets */}
-      <div className="bg-surface-container-lowest p-space-md rounded-xl border border-surface-container-high/50 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-space-sm">
-        <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary text-[20px]">auto_fix_high</span>
-          <span className="font-label-md text-label-md font-semibold text-on-surface">Quick Scenarios:</span>
-        </div>
-        <div className="flex flex-wrap items-center gap-space-xs">
-          <button
-            onClick={loadUserExamplePreset}
-            type="button"
-            className="px-space-sm py-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 text-xs font-semibold transition-colors flex items-center gap-1 border border-primary/20"
-          >
-            <span className="material-symbols-outlined text-[15px]">verified</span>
-            Your Request: 10k Today + 10k in 1 Wk - 5k Taken
-          </button>
-          <button
-            onClick={loadHighCapitalCrorePreset}
-            type="button"
-            className="px-space-sm py-1.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 text-xs font-semibold transition-colors flex items-center gap-1 border border-amber-500/30"
-          >
-            <span className="material-symbols-outlined text-[15px]">diamond</span>
-            ₹10,000,000+ (1 Crore+) Tranche
-          </button>
-          <button
-            onClick={loadPeerLoanPreset}
-            type="button"
-            className="px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-medium transition-colors border border-surface-container-highest/60"
-          >
-            Peer Loan (Multi-Tranche)
-          </button>
-          <button
-            onClick={loadMonthlyInterestPreset}
-            type="button"
-            className="px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-xs font-medium transition-colors border border-surface-container-highest/60"
-          >
-            2% / Month Informal Rate
-          </button>
-          <button
-            onClick={handleSortChronologically}
-            type="button"
-            className="px-space-sm py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-secondary text-xs font-medium transition-colors flex items-center gap-1"
-          >
-            <span className="material-symbols-outlined text-[15px]">swap_vert</span>
-            Sort by Date
-          </button>
-        </div>
-      </div>
 
       {/* Top High-Contrast KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
@@ -853,10 +655,11 @@ export const DateLedgerPage: React.FC = () => {
                   <input
                     type="number"
                     step="0.1"
-                    min="0.1"
+                    min="0"
                     max="100"
-                    value={rate}
-                    onChange={e => setRate(Math.max(0.1, Math.min(100, parseFloat(e.target.value) || 0)))}
+                    placeholder="Enter interest rate %"
+                    value={rate === 0 ? '' : rate}
+                    onChange={e => setRate(Math.max(0, Math.min(100, parseFloat(e.target.value) || 0)))}
                     className="w-full h-11 px-3 pr-10 rounded-lg bg-surface-container-lowest border border-outline-variant/60 font-headline-sm text-on-surface font-bold focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary font-bold text-sm">
@@ -1937,22 +1740,6 @@ export const DateLedgerPage: React.FC = () => {
             )}
           </div>
 
-          {/* Educational Formula & Mathematical Principle Card */}
-          <div className="bg-surface-container-lowest p-space-md rounded-xl border border-surface-container-high/50 shadow-xs flex flex-col gap-space-xs text-xs">
-            <div className="flex items-center gap-2 font-semibold text-on-surface">
-              <span className="material-symbols-outlined text-primary text-[18px]">menu_book</span>
-              <span>How Date-to-Date Interest Works:</span>
-            </div>
-            <p className="text-secondary leading-relaxed">
-              When money is added or withdrawn on custom dates, the debt/investment is broken into discrete time slices:
-            </p>
-            <div className="p-2.5 bg-surface-container-low rounded-lg font-mono text-2xs text-on-surface space-y-1">
-              <div>1. For each interval between Date(k-1) and Date(k), elapsed days = Date(k) − Date(k-1).</div>
-              <div>2. Period Interest ΔI = (Outstanding Balance) × (Annual Rate / 100) × (Days / {dayCountBasis}).</div>
-              <div>3. New Balance = Previous Balance + Inflow (− Outflow).</div>
-              <div>4. Final Settlement = Active Principal + Sum of all accrued interval interests up to settlement date.</div>
-            </div>
-          </div>
         </div>
       </div>
 
