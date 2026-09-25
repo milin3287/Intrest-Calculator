@@ -58,6 +58,18 @@ export const Header: React.FC = () => {
     };
   }, []);
 
+  // Prevent background scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const calculatorItems: NavSubItem[] = [
     {
       label: 'Date-to-Date Ledger',
@@ -291,7 +303,7 @@ export const Header: React.FC = () => {
               </button>
 
               {currencyDropdownOpen && (
-                <div className="absolute right-0 top-full mt-1.5 w-44 rounded-xl bg-surface-container-lowest dark:bg-surface-container-low border border-outline-variant/30 shadow-xl p-1.5 z-50">
+                <div className="absolute right-0 top-full mt-1.5 w-44 rounded-xl bg-surface-container-lowest dark:bg-surface-container-low border border-outline-variant/30 shadow-xl p-1.5 z-[60]">
                   <div className="px-2 py-1 text-[10px] font-mono uppercase text-secondary font-semibold border-b border-outline-variant/20 mb-1">
                     Select Currency
                   </div>
@@ -327,7 +339,7 @@ export const Header: React.FC = () => {
               onClick={toggleTheme}
               aria-label={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
               title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
-              className="relative flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border border-outline-variant/40 bg-surface-container-low hover:bg-surface-container text-on-surface transition-all shrink-0 shadow-xs hover:border-primary/40 focus:outline-none active:scale-95"
+              className="relative flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-full border border-outline-variant/40 bg-surface-container-low hover:bg-surface-container text-on-surface transition-all shrink-0 shadow-xs hover:border-primary/40 focus:outline-none active:scale-95"
               type="button"
             >
               <span className={`material-symbols-outlined text-[18px] transition-transform duration-300 ${
@@ -335,7 +347,7 @@ export const Header: React.FC = () => {
               }`}>
                 {theme === 'dark' ? 'dark_mode' : 'light_mode'}
               </span>
-              <span className="text-xs font-semibold tracking-tight">
+              <span className="hidden sm:inline text-xs font-semibold tracking-tight">
                 {theme === 'dark' ? 'Dark' : 'Light'}
               </span>
             </button>
@@ -422,35 +434,78 @@ export const Header: React.FC = () => {
         </div>
       </header>
 
-      {/* 5. Mobile & Responsive Slide-Over Menu Drawer */}
+      {/* 5. Mobile & Responsive Slide-Over Menu Drawer (z-[70], Top-0, Never obscured by navbar) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
+        <div className="fixed inset-0 z-[70] lg:hidden flex justify-end">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity animate-in fade-in duration-200"
             onClick={() => setMobileMenuOpen(false)}
+            aria-hidden="true"
           />
 
           {/* Drawer Panel */}
-          <div className="fixed right-0 top-16 bottom-0 w-80 max-w-[85vw] bg-surface-container-lowest dark:bg-surface-container-low shadow-2xl border-l border-outline-variant/30 p-4 overflow-y-auto flex flex-col justify-between animate-in slide-in-from-right duration-200">
-            <div className="flex flex-col gap-4">
-              {/* Theme & Currency Quick Bar */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-surface-container-high/40 border border-outline-variant/20">
-                <div className="flex flex-col">
-                  <span className="text-xs font-semibold text-on-surface">Appearance</span>
-                  <span className="text-[11px] text-secondary">
-                    {theme === 'dark' ? 'Dark theme active' : 'Light theme active'}
-                  </span>
+          <div className="relative w-80 max-w-[85vw] h-full bg-surface-container-lowest dark:bg-surface-container-low shadow-2xl border-l border-outline-variant/30 flex flex-col z-[71] animate-in slide-in-from-right duration-200 overflow-hidden">
+            {/* Dedicated Top Bar inside Drawer */}
+            <div className="h-16 px-4 border-b border-outline-variant/20 flex items-center justify-between shrink-0 bg-surface-container-low/60">
+              <button
+                onClick={() => handleNavClick('home')}
+                className="flex items-center gap-2 focus:outline-none"
+              >
+                <BrandLogo size="xs" showText={true} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                className="w-9 h-9 rounded-full bg-surface-container hover:bg-surface-container-high flex items-center justify-center text-on-surface transition-colors focus:outline-none"
+                aria-label="Close navigation menu"
+              >
+                <span className="material-symbols-outlined text-[22px]">close</span>
+              </button>
+            </div>
+
+            {/* Scrollable Content (Takes 100% of remaining height without overflowing the screen) */}
+            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 overscroll-contain">
+              {/* Appearance & Currency Strip */}
+              <div className="flex flex-col gap-2 p-3 rounded-xl bg-surface-container-high/40 border border-outline-variant/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-xs font-semibold text-on-surface">Appearance</span>
+                    <span className="text-[11px] text-secondary">
+                      {theme === 'dark' ? 'Dark theme active' : 'Light theme active'}
+                    </span>
+                  </div>
+                  <button
+                    onClick={toggleTheme}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-lowest dark:bg-surface-container border border-outline-variant/40 text-xs font-semibold shadow-xs"
+                    type="button"
+                  >
+                    <span className="material-symbols-outlined text-[16px] text-amber-500">
+                      {theme === 'dark' ? 'dark_mode' : 'light_mode'}
+                    </span>
+                    <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
+                  </button>
                 </div>
-                <button
-                  onClick={toggleTheme}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container-lowest dark:bg-surface-container border border-outline-variant/40 text-xs font-semibold shadow-xs"
-                >
-                  <span className="material-symbols-outlined text-[16px] text-amber-500">
-                    {theme === 'dark' ? 'dark_mode' : 'light_mode'}
-                  </span>
-                  <span>{theme === 'dark' ? 'Dark' : 'Light'}</span>
-                </button>
+
+                <div className="pt-2 border-t border-outline-variant/20 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-on-surface">Currency</span>
+                  <div className="flex items-center gap-1">
+                    {currencies.map(c => (
+                      <button
+                        key={c.code}
+                        onClick={() => setCurrency(c.code)}
+                        type="button"
+                        className={`px-2 py-0.5 rounded text-xs font-mono font-bold transition-all ${
+                          currency === c.code
+                            ? 'bg-primary text-white shadow-2xs'
+                            : 'bg-surface-container text-secondary hover:text-on-surface'
+                        }`}
+                      >
+                        {c.symbol}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Navigation Items */}
@@ -463,9 +518,10 @@ export const Header: React.FC = () => {
                   onClick={() => handleNavClick('home')}
                   className={`flex items-center gap-3 p-2.5 rounded-xl text-left text-sm font-medium transition-all ${
                     currentPath === 'home'
-                      ? 'bg-primary text-on-primary font-bold'
+                      ? 'bg-primary text-on-primary font-bold shadow-xs'
                       : 'hover:bg-surface-container text-on-surface'
                   }`}
+                  type="button"
                 >
                   <span className="material-symbols-outlined text-[20px]">home</span>
                   <span>Home</span>
@@ -485,23 +541,26 @@ export const Header: React.FC = () => {
                       onClick={() => handleNavClick(item.path)}
                       className={`flex items-start gap-3 p-2.5 rounded-xl text-left transition-all ${
                         active
-                          ? 'bg-primary text-on-primary font-semibold'
+                          ? 'bg-primary text-on-primary font-semibold shadow-xs'
                           : 'hover:bg-surface-container text-on-surface'
                       }`}
+                      type="button"
                     >
-                      <span className="material-symbols-outlined text-[20px] mt-0.5">{item.icon}</span>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-medium">{item.label}</span>
+                      <span className={`material-symbols-outlined text-[20px] mt-0.5 ${active ? 'text-on-primary' : 'text-primary'}`}>
+                        {item.icon}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="text-sm font-medium truncate">{item.label}</span>
                           {item.badge && (
-                            <span className={`px-1.5 py-0.2 rounded text-[10px] font-mono ${
-                              active ? 'bg-white/20 text-white' : 'bg-primary/10 text-primary'
+                            <span className={`px-1.5 py-0.2 rounded text-[10px] font-mono shrink-0 ${
+                              active ? 'bg-white/20 text-white font-bold' : 'bg-primary/10 text-primary font-bold'
                             }`}>
                               {item.badge}
                             </span>
                           )}
                         </div>
-                        <p className={`text-[11px] ${active ? 'text-white/80' : 'text-on-surface-variant'}`}>
+                        <p className={`text-[11px] line-clamp-1 ${active ? 'text-white/80' : 'text-on-surface-variant'}`}>
                           {item.description}
                         </p>
                       </div>
@@ -519,9 +578,10 @@ export const Header: React.FC = () => {
                   onClick={() => handleNavClick('history')}
                   className={`flex items-center gap-3 p-2.5 rounded-xl text-left text-sm font-medium transition-all ${
                     currentPath === 'history'
-                      ? 'bg-primary text-on-primary font-bold'
+                      ? 'bg-primary text-on-primary font-bold shadow-xs'
                       : 'hover:bg-surface-container text-on-surface'
                   }`}
+                  type="button"
                 >
                   <span className="material-symbols-outlined text-[20px]">history</span>
                   <span>Calculation Audit History</span>
@@ -536,9 +596,10 @@ export const Header: React.FC = () => {
                   onClick={() => handleNavClick('learn')}
                   className={`flex items-center gap-3 p-2.5 rounded-xl text-left text-sm font-medium transition-all ${
                     currentPath === 'learn'
-                      ? 'bg-primary text-on-primary font-bold'
+                      ? 'bg-primary text-on-primary font-bold shadow-xs'
                       : 'hover:bg-surface-container text-on-surface'
                   }`}
+                  type="button"
                 >
                   <span className="material-symbols-outlined text-[20px]">menu_book</span>
                   <span>Knowledge & Formulas</span>
@@ -547,7 +608,7 @@ export const Header: React.FC = () => {
             </div>
 
             {/* Drawer Footer */}
-            <div className="pt-4 border-t border-outline-variant/20 mt-4 flex items-center justify-between text-xs text-secondary">
+            <div className="p-3 px-4 border-t border-outline-variant/20 shrink-0 flex items-center justify-between text-xs text-secondary bg-surface-container-low/40">
               <span>MRP Interestly v2.4</span>
               <span className="font-mono">Exact-Day Math</span>
             </div>

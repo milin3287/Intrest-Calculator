@@ -6,6 +6,7 @@ import { Footer } from './components/Footer';
 import { Toast } from './components/Toast';
 import { FormulaDrawer } from './components/FormulaDrawer';
 import { OfflineIndicator } from './components/OfflineIndicator';
+import { MobileBottomNav } from './components/MobileBottomNav';
 
 import { HomePage } from './pages/HomePage';
 import { CalculatorsPage } from './pages/CalculatorsPage';
@@ -48,7 +49,7 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-surface text-on-surface transition-colors duration-200">
       <Header />
-      <main className="flex-1 max-w-7xl w-full mx-auto px-space-md sm:px-space-lg lg:px-space-xl pt-20 md:pt-24 pb-space-xl">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-space-lg lg:px-space-xl pt-28 sm:pt-30 lg:pt-22 xl:pt-24 pb-24 md:pb-space-xl">
         <ErrorBoundary>
           {renderCurrentPage()}
         </ErrorBoundary>
@@ -57,6 +58,7 @@ const AppContent: React.FC = () => {
       <Toast />
       <OfflineIndicator />
       <FormulaDrawer />
+      <MobileBottomNav />
     </div>
   );
 };

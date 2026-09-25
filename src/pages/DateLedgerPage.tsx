@@ -59,8 +59,10 @@ export const DateLedgerPage: React.FC = () => {
   const [editAmount, setEditAmount] = useState<number>(0);
   const [editNote, setEditNote] = useState<string>('');
 
-  // Mobile / Desktop View Mode for Passbook Ledger
-  const [passbookViewMode, setPassbookViewMode] = useState<'table' | 'cards'>('table');
+  // Mobile / Desktop View Mode for Passbook Ledger (Defaults to clean cards on phones)
+  const [passbookViewMode, setPassbookViewMode] = useState<'table' | 'cards'>(() =>
+    typeof window !== 'undefined' && window.innerWidth < 640 ? 'cards' : 'table'
+  );
 
   // Continuous auto-save to active ledger
   useEffect(() => {
@@ -358,60 +360,62 @@ export const DateLedgerPage: React.FC = () => {
           <span className="text-on-surface font-semibold">Custom Dates &amp; Running Ledger</span>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap items-center gap-space-xs shrink-0">
-          <button
-            onClick={() => setIsSlotsModalOpen(true)}
-            className="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors border border-surface-container-highest/60"
-            type="button"
-            title="View time-stamped version history"
-          >
-            <span className="material-symbols-outlined text-[18px] text-primary">history</span>
-            <span>Slots ({slots.length})</span>
-          </button>
-          <button
-            onClick={handleSaveToMonthlySpace}
-            className="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors border border-surface-container-highest/60"
-            type="button"
-            title="Save into dedicated monthly space"
-          >
-            <span className="material-symbols-outlined text-[18px] text-emerald-600">bookmark</span>
-            <span>Save to Monthly Space</span>
-          </button>
-          <button
-            onClick={handleSaveToHistory}
-            className="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors border border-surface-container-highest/60"
-            type="button"
-          >
-            <span className="material-symbols-outlined text-[18px]">bookmark_add</span>
-            Save Audit
-          </button>
-          <button
-            onClick={handleCopySummary}
-            className="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors border border-surface-container-highest/60"
-            type="button"
-          >
-            <span className="material-symbols-outlined text-[18px]">content_copy</span>
-            Copy
-          </button>
-          <button
-            onClick={handleDownloadPDF}
-            className="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-md text-label-md transition-all shadow-xs font-bold ring-2 ring-primary/20"
-            type="button"
-            title="Download official PDF passbook statement"
-          >
-            <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span>
-            <span>Download PDF</span>
-          </button>
-          <button
-            onClick={handleExportCSV}
-            className="flex items-center gap-1.5 px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors border border-surface-container-highest/60 font-semibold"
-            type="button"
-            title="Export spreadsheet CSV"
-          >
-            <span className="material-symbols-outlined text-[18px]">download</span>
-            Export CSV
-          </button>
+        {/* Action Buttons (Touch-friendly & scrollable on mobile) */}
+        <div className="w-full sm:w-auto overflow-x-auto no-scrollbar pb-0.5">
+          <div className="flex items-center gap-1.5 min-w-max">
+            <button
+              onClick={() => setIsSlotsModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs sm:text-sm transition-colors border border-surface-container-highest/60 whitespace-nowrap min-h-[40px]"
+              type="button"
+              title="View time-stamped version history"
+            >
+              <span className="material-symbols-outlined text-[18px] text-primary">history</span>
+              <span>Slots ({slots.length})</span>
+            </button>
+            <button
+              onClick={handleSaveToMonthlySpace}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs sm:text-sm transition-colors border border-surface-container-highest/60 whitespace-nowrap min-h-[40px]"
+              type="button"
+              title="Save into dedicated monthly space"
+            >
+              <span className="material-symbols-outlined text-[18px] text-emerald-600">bookmark</span>
+              <span>Save to Monthly Space</span>
+            </button>
+            <button
+              onClick={handleSaveToHistory}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs sm:text-sm transition-colors border border-surface-container-highest/60 whitespace-nowrap min-h-[40px]"
+              type="button"
+            >
+              <span className="material-symbols-outlined text-[18px]">bookmark_add</span>
+              Save Audit
+            </button>
+            <button
+              onClick={handleCopySummary}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs sm:text-sm transition-colors border border-surface-container-highest/60 whitespace-nowrap min-h-[40px]"
+              type="button"
+            >
+              <span className="material-symbols-outlined text-[18px]">content_copy</span>
+              Copy
+            </button>
+            <button
+              onClick={handleDownloadPDF}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container font-label-md text-xs sm:text-sm transition-all shadow-xs font-bold ring-2 ring-primary/20 whitespace-nowrap min-h-[40px]"
+              type="button"
+              title="Download official PDF passbook statement"
+            >
+              <span className="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+              <span>Download PDF</span>
+            </button>
+            <button
+              onClick={handleExportCSV}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs sm:text-sm transition-colors border border-surface-container-highest/60 font-semibold whitespace-nowrap min-h-[40px]"
+              type="button"
+              title="Export spreadsheet CSV"
+            >
+              <span className="material-symbols-outlined text-[18px]">download</span>
+              Export CSV
+            </button>
+          </div>
         </div>
       </div>
 
@@ -470,103 +474,101 @@ export const DateLedgerPage: React.FC = () => {
       </div>
 
 
-      {/* Top High-Contrast KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+      {/* Top High-Contrast KPI Cards (2x2 on mobile, 4-col on desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-space-md">
         {/* Card 1: Net Principal */}
-        <div className="bg-surface-container-lowest p-space-md rounded-xl border border-surface-container-high/50 shadow-xs flex flex-col justify-between">
+        <div className="bg-surface-container-lowest p-3 sm:p-space-md rounded-xl border border-surface-container-high/50 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-secondary">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider font-semibold">
-              Net Principal Balance
+            <span className="font-label-sm text-[11px] sm:text-label-sm uppercase tracking-wider font-semibold truncate">
+              Net Principal
             </span>
-            <span className="material-symbols-outlined text-[20px] text-primary">account_balance_wallet</span>
+            <span className="material-symbols-outlined text-[18px] sm:text-[20px] text-primary shrink-0">account_balance_wallet</span>
           </div>
-          <div className="mt-2">
-            <div className="text-headline-sm font-extrabold text-on-surface flex items-baseline gap-1.5 flex-wrap">
-              <span>{formatMoney(calculation.netPrincipalBalance)}</span>
+          <div className="mt-1.5 sm:mt-2">
+            <div className="text-base sm:text-headline-sm font-extrabold text-on-surface flex items-baseline gap-1 flex-wrap">
+              <span className="truncate">{formatMoney(calculation.netPrincipalBalance)}</span>
               {calculation.netPrincipalBalance >= 10000000 && (
-                <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300">
+                <span className="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300">
                   {formatMoneyCompact(calculation.netPrincipalBalance)}
                 </span>
               )}
             </div>
-            <div className="text-xs text-secondary mt-1 flex items-center gap-1">
-              <span className="text-emerald-600 font-medium">+{formatMoney(calculation.totalInflows)}</span>
-              <span>rec&apos;d</span>
+            <div className="text-[10px] sm:text-xs text-secondary mt-1 flex items-center gap-1 truncate">
+              <span className="text-emerald-600 font-medium">+{formatMoneyCompact(calculation.totalInflows)}</span>
               <span>&bull;</span>
-              <span className="text-rose-600 font-medium">-{formatMoney(calculation.totalOutflows)}</span>
-              <span>taken</span>
+              <span className="text-rose-600 font-medium">-{formatMoneyCompact(calculation.totalOutflows)}</span>
             </div>
           </div>
         </div>
 
         {/* Card 2: Total Accrued Interest */}
-        <div className="bg-surface-container-lowest p-space-md rounded-xl border border-surface-container-high/50 shadow-xs flex flex-col justify-between">
+        <div className="bg-surface-container-lowest p-3 sm:p-space-md rounded-xl border border-surface-container-high/50 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-secondary">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider font-semibold">
-              Total Accrued Interest
+            <span className="font-label-sm text-[11px] sm:text-label-sm uppercase tracking-wider font-semibold truncate">
+              Accrued Interest
             </span>
-            <span className="material-symbols-outlined text-[20px] text-tertiary">trending_up</span>
+            <span className="material-symbols-outlined text-[18px] sm:text-[20px] text-tertiary shrink-0">trending_up</span>
           </div>
-          <div className="mt-2">
-            <div className="text-headline-sm font-extrabold text-tertiary flex items-baseline gap-1.5 flex-wrap">
-              <span>{formatMoney(calculation.totalInterestAccrued)}</span>
+          <div className="mt-1.5 sm:mt-2">
+            <div className="text-base sm:text-headline-sm font-extrabold text-tertiary flex items-baseline gap-1 flex-wrap">
+              <span className="truncate">{formatMoney(calculation.totalInterestAccrued)}</span>
               {calculation.totalInterestAccrued >= 10000000 && (
-                <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-tertiary/15 text-tertiary">
+                <span className="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded bg-tertiary/15 text-tertiary">
                   {formatMoneyCompact(calculation.totalInterestAccrued)}
                 </span>
               )}
             </div>
-            <div className="text-xs text-secondary mt-1">
-              Avg: {formatMoney(calculation.averageDailyInterest)} / day &bull; {calculation.totalDaysHorizon} days total
+            <div className="text-[10px] sm:text-xs text-secondary mt-1 truncate">
+              {formatMoney(calculation.averageDailyInterest)}/day &bull; {calculation.totalDaysHorizon}d
             </div>
           </div>
         </div>
 
         {/* Card 3: Grand Settlement Due / Total */}
-        <div className="bg-gradient-to-br from-primary-fixed to-surface-container-lowest p-space-md rounded-xl border border-primary/20 shadow-sm flex flex-col justify-between">
+        <div className="bg-gradient-to-br from-primary-fixed to-surface-container-lowest p-3 sm:p-space-md rounded-xl border border-primary/20 shadow-sm flex flex-col justify-between">
           <div className="flex items-center justify-between text-primary">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider font-bold">
-              {userRole === 'borrower' ? 'Total Settlement Payable' : 'Total Settlement Receivable'}
+            <span className="font-label-sm text-[11px] sm:text-label-sm uppercase tracking-wider font-bold truncate">
+              {userRole === 'borrower' ? 'Payable Total' : 'Receivable Total'}
             </span>
-            <span className="material-symbols-outlined text-[20px]">payments</span>
+            <span className="material-symbols-outlined text-[18px] sm:text-[20px] shrink-0">payments</span>
           </div>
-          <div className="mt-2">
-            <div className="text-headline-md font-black text-primary flex items-baseline gap-1.5 flex-wrap">
-              <span>{formatMoney(calculation.grandTotalSettlement)}</span>
+          <div className="mt-1.5 sm:mt-2">
+            <div className="text-base sm:text-headline-md font-black text-primary flex items-baseline gap-1 flex-wrap">
+              <span className="truncate">{formatMoney(calculation.grandTotalSettlement)}</span>
               {calculation.grandTotalSettlement >= 10000000 && (
-                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-primary/20 text-primary">
+                <span className="text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">
                   {formatMoneyCompact(calculation.grandTotalSettlement)}
                 </span>
               )}
             </div>
-            <div className="text-xs text-on-surface-variant mt-1 font-medium">
-              Principal + All Daily Accrued Interest as of {asOfDate}
+            <div className="text-[10px] sm:text-xs text-on-surface-variant mt-0.5 font-medium truncate">
+              As of {asOfDate}
             </div>
             <button
               type="button"
               onClick={handleDownloadPDF}
-              className="mt-2.5 w-full py-1.5 px-3 rounded-lg bg-primary text-on-primary text-xs font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5 shadow-2xs"
+              className="mt-2 w-full py-1 sm:py-1.5 px-2 rounded-lg bg-primary text-on-primary text-[11px] sm:text-xs font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-1 shadow-2xs"
               title="Download formal statement PDF"
             >
-              <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span>
-              <span>Download Statement (PDF)</span>
+              <span className="material-symbols-outlined text-[14px] sm:text-[16px]">picture_as_pdf</span>
+              <span className="truncate">PDF Statement</span>
             </button>
           </div>
         </div>
 
         {/* Card 4: Horizon & Rate Basis */}
-        <div className="bg-surface-container-lowest p-space-md rounded-xl border border-surface-container-high/50 shadow-xs flex flex-col justify-between">
+        <div className="bg-surface-container-lowest p-3 sm:p-space-md rounded-xl border border-surface-container-high/50 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between text-secondary">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider font-semibold">
+            <span className="font-label-sm text-[11px] sm:text-label-sm uppercase tracking-wider font-semibold truncate">
               Accrual Horizon
             </span>
-            <span className="material-symbols-outlined text-[20px]">calendar_month</span>
+            <span className="material-symbols-outlined text-[18px] sm:text-[20px] shrink-0">calendar_month</span>
           </div>
-          <div className="mt-2">
-            <div className="text-headline-sm font-bold text-on-surface">
-              {calculation.totalDaysHorizon} <span className="text-sm font-normal text-secondary">Days</span>
+          <div className="mt-1.5 sm:mt-2">
+            <div className="text-base sm:text-headline-sm font-bold text-on-surface">
+              {calculation.totalDaysHorizon} <span className="text-xs sm:text-sm font-normal text-secondary">Days</span>
             </div>
-            <div className="text-xs text-secondary mt-1">
+            <div className="text-[10px] sm:text-xs text-secondary mt-1 truncate">
               {rate}% {rateType === 'monthly' ? 'p.m.' : 'p.a.'} &bull; {compoundingMethod === 'simple' ? 'Simple' : 'Daily Comp.'}
             </div>
           </div>

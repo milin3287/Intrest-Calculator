@@ -315,22 +315,22 @@ export const InvestmentPage: React.FC = () => {
             <span className="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
             <span className="text-on-surface font-semibold">Wealth Planning</span>
           </div>
-          <h1 className="font-headline-lg text-headline-lg text-on-surface font-bold mt-1">
+          <h1 className="text-2xl sm:text-3xl lg:text-headline-lg text-on-surface font-extrabold mt-1 tracking-tight">
             {investmentType === 'SWP'
               ? 'Systematic Withdrawal Plan (SWP)'
               : 'Systematic Investment & Wealth Accumulator'}
           </h1>
-          <p className="font-body-md text-body-md text-secondary max-w-2xl">
+          <p className="font-body-md text-sm sm:text-base text-secondary max-w-2xl mt-0.5">
             {investmentType === 'SWP'
               ? 'Calculate periodic retirement cashflows, capital longevity, and remaining balance from your mutual fund or fixed-return corpus.'
               : 'Simulate SIP (Systematic Investment Plans), Step-Up escalation models, lumpsum compounding, and reverse target goal plans.'}
           </p>
         </div>
-        <div className="flex items-center gap-space-xs shrink-0">
+        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto pt-1 sm:pt-0">
           {investmentType === 'SWP' && (
             <button
               onClick={handleCopySwpSummary}
-              className="flex items-center gap-1.5 px-space-md py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md font-semibold border border-surface-container-high/60 transition-all shadow-xs"
+              className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-xs sm:text-sm font-semibold border border-surface-container-high/60 transition-all shadow-xs min-h-[44px]"
               type="button"
             >
               <span className="material-symbols-outlined text-[18px]">content_copy</span>
@@ -339,7 +339,7 @@ export const InvestmentPage: React.FC = () => {
           )}
           <button
             onClick={handleSaveInvestment}
-            className="flex items-center gap-1.5 px-space-md py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-container shadow-sm transition-all"
+            className="flex-1 sm:flex-none justify-center flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-xs sm:text-sm font-bold hover:bg-primary-container shadow-sm transition-all min-h-[44px]"
             type="button"
           >
             <span className="material-symbols-outlined text-[18px]">bookmark_add</span>
@@ -348,31 +348,33 @@ export const InvestmentPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Model Type Selector */}
-      <div className="flex items-center gap-space-xs p-1.5 bg-surface-container-low rounded-xl w-fit border border-surface-container-high/40 flex-wrap">
-        {[
-          { id: 'SIP', label: 'Systematic SIP', icon: 'autorenew' },
-          { id: 'SWP', label: 'Systematic SWP (Withdrawal)', icon: 'payments' },
-          { id: 'Lumpsum', label: 'One-time Lumpsum', icon: 'account_balance_wallet' },
-          { id: 'Goal', label: 'Target Goal Planner', icon: 'flag' },
-        ].map(item => {
-          const isSelected = investmentType === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => setInvestmentType(item.id as InvestmentMode)}
-              type="button"
-              className={`flex items-center gap-1.5 px-space-md py-space-xs rounded-lg font-label-md text-label-md transition-all ${
-                isSelected
-                  ? 'bg-surface-container-lowest text-primary shadow-xs font-semibold'
-                  : 'text-secondary hover:text-on-surface'
-              }`}
-            >
-              <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
-              <span>{item.label}</span>
-            </button>
-          );
-        })}
+      {/* Model Type Selector (Touch-friendly & swipeable on mobile) */}
+      <div className="w-full overflow-x-auto no-scrollbar pb-0.5 sm:w-fit">
+        <div className="flex items-center gap-1.5 p-1.5 bg-surface-container-low rounded-xl border border-surface-container-high/40 min-w-max">
+          {[
+            { id: 'SIP', label: 'Systematic SIP', icon: 'autorenew' },
+            { id: 'SWP', label: 'Systematic SWP (Withdrawal)', icon: 'payments' },
+            { id: 'Lumpsum', label: 'One-time Lumpsum', icon: 'account_balance_wallet' },
+            { id: 'Goal', label: 'Target Goal Planner', icon: 'flag' },
+          ].map(item => {
+            const isSelected = investmentType === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setInvestmentType(item.id as InvestmentMode)}
+                type="button"
+                className={`flex items-center gap-1.5 px-3 py-2 sm:px-space-md sm:py-space-xs rounded-lg font-label-md text-xs sm:text-sm transition-all whitespace-nowrap shrink-0 min-h-[40px] ${
+                  isSelected
+                    ? 'bg-surface-container-lowest text-primary shadow-xs font-bold'
+                    : 'text-secondary hover:text-on-surface'
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Two Column Grid */}
@@ -930,8 +932,8 @@ export const InvestmentPage: React.FC = () => {
         <div className="lg:col-span-7 flex flex-col gap-space-md">
           {/* Main Hero Result Card */}
           <div className="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col gap-space-md border border-surface-container-high/50">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low p-space-lg rounded-xl border border-surface-container-high/50">
-              <div className="flex flex-col gap-1">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low p-space-md sm:p-space-lg rounded-xl border border-surface-container-high/50">
+              <div className="flex flex-col gap-1 min-w-0">
                 <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold">
                   {investmentType === 'Goal'
                     ? 'Target Wealth Corpus'
@@ -939,12 +941,12 @@ export const InvestmentPage: React.FC = () => {
                     ? 'Total Regular Cash Harvested'
                     : 'Projected Wealth Maturity'}
                 </span>
-                <div className="flex items-baseline gap-space-xs">
-                  <span className="font-display-xl text-display-xl text-primary font-bold tracking-tight">
+                <div className="flex items-baseline gap-space-xs overflow-hidden">
+                  <span className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-primary font-extrabold tracking-tight break-words">
                     {formatMoney(investmentType === 'SWP' ? swpTotalWithdrawn : totalFutureValue, 2)}
                   </span>
                 </div>
-                <p className="font-body-sm text-body-sm text-secondary">
+                <p className="font-body-sm text-xs sm:text-sm text-secondary">
                   {investmentType === 'SWP'
                     ? `Harvested via ${swpFrequency} payouts over ${timeHorizonYears} years @ ${expectedReturnRate}% CAGR`
                     : timeHorizonYears > 0 && expectedReturnRate > 0
@@ -952,7 +954,7 @@ export const InvestmentPage: React.FC = () => {
                     : 'Enter contribution, expected return, and time horizon to evaluate corpus'}
                 </p>
                 {investmentType === 'SWP' && (
-                  <div className="mt-2 pt-2 border-t border-surface-container-high/40 flex items-center gap-2">
+                  <div className="mt-2 pt-2 border-t border-surface-container-high/40 flex items-center gap-2 flex-wrap">
                     <span className="text-xs text-secondary font-medium">Terminal Balance in Corpus:</span>
                     <span className="text-sm font-bold font-data-mono-md text-emerald-600 dark:text-emerald-400">
                       {formatMoney(swpFinalRemainingCorpus)}
@@ -963,7 +965,7 @@ export const InvestmentPage: React.FC = () => {
               <div className="flex flex-col items-start md:items-end gap-1.5 shrink-0">
                 {investmentType === 'SWP' ? (
                   <span
-                    className={`px-space-sm py-1 rounded-full font-label-md text-label-md font-bold flex items-center gap-1 ${
+                    className={`px-space-sm py-1 rounded-full font-label-md text-xs sm:text-sm font-bold flex items-center gap-1 ${
                       isSwpDepleted
                         ? 'bg-red-500/15 text-red-600 dark:text-red-400'
                         : isSwpPerpetual
@@ -981,7 +983,7 @@ export const InvestmentPage: React.FC = () => {
                       : `Sustains ${timeHorizonYears} Yrs`}
                   </span>
                 ) : (
-                  <span className="px-space-sm py-1 rounded-full bg-surface-container-highest text-primary font-label-md text-label-md font-bold flex items-center gap-1">
+                  <span className="px-space-sm py-1 rounded-full bg-surface-container-highest text-primary font-label-md text-xs sm:text-sm font-bold flex items-center gap-1">
                     <span className="material-symbols-outlined text-[18px]">trending_up</span>
                     {wealthMultiplier}&times; Wealth Multiplier
                   </span>
@@ -989,91 +991,91 @@ export const InvestmentPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Bento Tiles */}
+            {/* Bento Tiles (2 columns on mobile, 4 columns on tablet/desktop) */}
             {investmentType === 'SWP' ? (
-              <div className="grid grid-cols-1 sm:grid-cols-4 gap-space-sm pt-space-xs">
-                <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                  <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-space-sm pt-space-xs">
+                <div className="p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                  <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
                     Initial Corpus (P)
                   </span>
-                  <span className="font-data-mono-md text-data-mono-md font-bold text-on-surface">
+                  <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-on-surface truncate">
                     {formatMoney(swpInitialInvestment)}
                   </span>
-                  <span className="font-body-sm text-body-sm text-secondary">
+                  <span className="font-body-sm text-[10px] sm:text-xs text-secondary truncate">
                     Initial lump sum
                   </span>
                 </div>
 
-                <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                  <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
+                <div className="p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                  <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
                     Total Harvested
                   </span>
-                  <span className="font-data-mono-md text-data-mono-md font-bold text-tertiary">
+                  <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-tertiary truncate">
                     {formatMoney(swpTotalWithdrawn)}
                   </span>
-                  <span className="font-body-sm text-body-sm text-tertiary font-semibold">
+                  <span className="font-body-sm text-[10px] sm:text-xs text-tertiary font-semibold truncate">
                     Received in cash
                   </span>
                 </div>
 
-                <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                  <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
+                <div className="p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                  <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
                     Ending Corpus
                   </span>
-                  <span className="font-data-mono-md text-data-mono-md font-bold text-primary">
+                  <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-primary truncate">
                     {formatMoney(swpFinalRemainingCorpus)}
                   </span>
-                  <span className="font-body-sm text-body-sm text-secondary">
+                  <span className="font-body-sm text-[10px] sm:text-xs text-secondary truncate">
                     Portfolio balance
                   </span>
                 </div>
 
-                <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                  <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
+                <div className="p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                  <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
                     Net Gain (Interest)
                   </span>
-                  <span className="font-data-mono-md text-data-mono-md font-bold text-emerald-600 dark:text-emerald-400">
+                  <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-emerald-600 dark:text-emerald-400 truncate">
                     +{formatMoney(swpNetWealthGain)}
                   </span>
-                  <span className="font-body-sm text-body-sm text-secondary">
+                  <span className="font-body-sm text-[10px] sm:text-xs text-secondary truncate">
                     Total yield earned
                   </span>
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-space-sm pt-space-xs">
-                <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                  <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-space-sm pt-space-xs">
+                <div className="p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                  <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
                     Total Deposits (P)
                   </span>
-                  <span className="font-data-mono-md text-data-mono-md font-bold text-on-surface">
+                  <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-on-surface truncate">
                     {formatMoney(totalInvestedAmount)}
                   </span>
-                  <span className="font-body-sm text-body-sm text-secondary">
+                  <span className="font-body-sm text-[10px] sm:text-xs text-secondary truncate">
                     Capital committed
                   </span>
                 </div>
 
-                <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                  <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
+                <div className="p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                  <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
                     Estimated Wealth Gain
                   </span>
-                  <span className="font-data-mono-md text-data-mono-md font-bold text-tertiary">
+                  <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-tertiary truncate">
                     +{formatMoney(estimatedWealthGain)}
                   </span>
-                  <span className="font-body-sm text-body-sm text-tertiary font-semibold">
+                  <span className="font-body-sm text-[10px] sm:text-xs text-tertiary font-semibold truncate">
                     Pure compound interest
                   </span>
                 </div>
 
-                <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                  <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
+                <div className="col-span-2 sm:col-span-1 p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                  <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
                     Total Portfolio
                   </span>
-                  <span className="font-data-mono-md text-data-mono-md font-bold text-primary">
+                  <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-primary truncate">
                     {formatMoney(totalFutureValue)}
                   </span>
-                  <span className="font-body-sm text-body-sm text-secondary">
+                  <span className="font-body-sm text-[10px] sm:text-xs text-secondary truncate">
                     Maturity harvest
                   </span>
                 </div>
@@ -1083,12 +1085,12 @@ export const InvestmentPage: React.FC = () => {
             {/* Growth or SWP Trajectory & Schedule */}
             {investmentType === 'SWP' ? (
               <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-3 border border-surface-container-high/40">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-2">
                   <div>
                     <span className="font-label-md text-label-md font-semibold text-on-surface block">
                       Annual Withdrawal &amp; Balance Amortization
                     </span>
-                    <span className="font-body-sm text-body-sm text-secondary">
+                    <span className="font-body-sm text-xs text-secondary">
                       Year-by-year cash payouts vs remaining invested capital
                     </span>
                   </div>
@@ -1106,7 +1108,12 @@ export const InvestmentPage: React.FC = () => {
                   )}
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="sm:hidden text-2xs text-secondary flex items-center gap-1">
+                  <span className="material-symbols-outlined text-[14px] text-primary">swipe</span>
+                  <span>Swipe horizontally to view full schedule table</span>
+                </div>
+
+                <div className="overflow-x-auto -mx-1 px-1">
                   <table className="w-full text-xs text-left">
                     <thead>
                       <tr className="border-b border-surface-container-high/60 text-secondary font-semibold">

@@ -111,17 +111,17 @@ export const LoanAndEmiPage: React.FC = () => {
             <span className="material-symbols-outlined text-[16px] text-outline">chevron_right</span>
             <span className="text-on-surface font-semibold">Loan &amp; Amortization</span>
           </div>
-          <h1 className="font-headline-lg text-headline-lg text-on-surface font-bold mt-1">
+          <h1 className="text-2xl sm:text-3xl lg:text-headline-lg text-on-surface font-extrabold mt-1 tracking-tight">
             Equated Monthly Installment (EMI) Calculator
           </h1>
-          <p className="font-body-md text-body-md text-secondary max-w-2xl">
+          <p className="font-body-md text-sm sm:text-base text-secondary max-w-2xl mt-0.5">
             Simulate mortgage, auto, or personal debt amortization with reducing balance interest, prepayment payoffs, and schedule ledgers.
           </p>
         </div>
-        <div className="flex items-center gap-space-xs shrink-0">
+        <div className="flex items-center gap-space-xs shrink-0 w-full sm:w-auto pt-1 sm:pt-0">
           <button
             onClick={handleSaveLoan}
-            className="flex items-center gap-1.5 px-space-md py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-container shadow-sm transition-all"
+            className="w-full sm:w-auto justify-center flex items-center gap-1.5 px-space-md py-2.5 rounded-xl bg-primary text-on-primary font-label-md text-xs sm:text-sm font-bold hover:bg-primary-container shadow-sm transition-all min-h-[44px]"
             type="button"
           >
             <span className="material-symbols-outlined text-[18px]">bookmark_add</span>
@@ -321,19 +321,19 @@ export const LoanAndEmiPage: React.FC = () => {
         {/* Right Visual Amortization Results Column (7 cols) */}
         <div className="lg:col-span-7 flex flex-col gap-space-md">
           {/* Main EMI Metric Card */}
-          <div className="bg-surface-container-lowest p-space-lg rounded-2xl shadow-sm flex flex-col gap-space-md border border-surface-container-high/50">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low p-space-lg rounded-xl border border-surface-container-high/50">
-              <div className="flex flex-col gap-1">
+          <div className="bg-surface-container-lowest p-space-md sm:p-space-lg rounded-2xl shadow-sm flex flex-col gap-space-md border border-surface-container-high/50">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low p-space-md sm:p-space-lg rounded-xl border border-surface-container-high/50">
+              <div className="flex flex-col gap-1 min-w-0">
                 <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold">
                   Monthly Installment (EMI)
                 </span>
-                <div className="flex items-baseline gap-space-xs">
-                  <span className="font-display-xl text-display-xl text-primary font-bold tracking-tight">
+                <div className="flex items-baseline gap-space-xs overflow-hidden flex-wrap">
+                  <span className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-primary font-extrabold tracking-tight break-words">
                     {formatMoney(emi, 2)}
                   </span>
-                  <span className="text-secondary font-label-md text-label-md font-medium">/ month</span>
+                  <span className="text-secondary font-label-md text-xs sm:text-sm font-medium">/ month</span>
                 </div>
-                <p className="font-body-sm text-body-sm text-secondary">
+                <p className="font-body-sm text-xs sm:text-sm text-secondary">
                   {loanAmount > 0 && interestRate > 0 && tenureYears > 0
                     ? `Calculated for ${totalMonths} monthly payments at ${interestRate}% APR`
                     : 'Enter loan amount, interest rate, and tenure to calculate EMI'}
@@ -356,41 +356,41 @@ export const LoanAndEmiPage: React.FC = () => {
               )}
             </div>
 
-            {/* 3 Bento Tiles for Core Loan Totals */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-space-sm pt-space-xs">
-              <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
+            {/* 3 Bento Tiles for Core Loan Totals (Responsive 2-col on mobile, tile 3 spans 2) */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-space-sm pt-space-xs">
+              <div className="p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
                   Principal Borrowed
                 </span>
-                <span className="font-data-mono-md text-data-mono-md font-bold text-on-surface">
+                <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-on-surface truncate">
                   {formatMoney(loanAmount)}
                 </span>
-                <span className="font-body-sm text-body-sm text-secondary">
+                <span className="font-body-sm text-[10px] sm:text-xs text-secondary truncate">
                   {principalPct.toFixed(1)}% of total payout
                 </span>
               </div>
 
-              <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
-                  Total Interest Accrued
+              <div className="p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
+                  Total Interest
                 </span>
-                <span className="font-data-mono-md text-data-mono-md font-bold text-tertiary">
+                <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-tertiary truncate">
                   {formatMoney(prepaymentActive ? prepayTotalInterest : standardTotalInterest, 2)}
                 </span>
-                <span className="font-body-sm text-body-sm text-tertiary font-semibold">
+                <span className="font-body-sm text-[10px] sm:text-xs text-tertiary font-semibold truncate">
                   {interestPct.toFixed(1)}% interest cost
                 </span>
               </div>
 
-              <div className="p-space-md rounded-xl bg-surface-container-low flex flex-col gap-1 border border-surface-container-high/40">
-                <span className="font-label-sm text-label-sm text-secondary uppercase font-semibold">
+              <div className="col-span-2 sm:col-span-1 p-3 sm:p-space-md rounded-xl bg-surface-container-low flex flex-col gap-0.5 sm:gap-1 border border-surface-container-high/40">
+                <span className="font-label-sm text-[11px] sm:text-label-sm text-secondary uppercase font-semibold truncate">
                   Total Repayment
                 </span>
-                <span className="font-data-mono-md text-data-mono-md font-bold text-primary">
+                <span className="font-data-mono-md text-xs sm:text-data-mono-md font-bold text-primary truncate">
                   {formatMoney(totalPayable, 2)}
                 </span>
-                <span className="font-body-sm text-body-sm text-secondary">
-                  Principal + Total Interest
+                <span className="font-body-sm text-[10px] sm:text-xs text-secondary truncate">
+                  Principal + Total interest
                 </span>
               </div>
             </div>

@@ -184,7 +184,7 @@ export const Footer: React.FC = () => {
               Interestly provides quantitative mathematical simulations for informational, academic, and personal planning purposes. Computation algorithms assume uniform periodic accrual and do not constitute registered financial, investment, tax, or legal advice.
             </p>
           </div>
-          <div className="flex items-center gap-4 shrink-0">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-4 shrink-0 w-full sm:w-auto pt-2 sm:pt-0">
             <button
               onClick={toggleTheme}
               className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container border border-outline-variant/40 text-on-surface text-xs font-medium hover:border-primary/40 transition-colors shadow-2xs"

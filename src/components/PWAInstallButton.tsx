@@ -15,12 +15,13 @@ export const PWAInstallButton: React.FC = () => {
     return (
       <button
         onClick={install}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-xs font-bold transition-all shadow-xs shrink-0"
+        className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-xs font-bold transition-all shadow-xs shrink-0"
         type="button"
         title="Install app on Android / Phone"
+        aria-label="Install App"
       >
         <span className="material-symbols-outlined text-[16px]">install_mobile</span>
-        <span>Install App</span>
+        <span className="hidden sm:inline">Install App</span>
       </button>
     );
   }
@@ -31,12 +32,13 @@ export const PWAInstallButton: React.FC = () => {
       <>
         <button
           onClick={() => setShowIOSGuide(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-semibold transition-all border border-outline-variant/60 shrink-0"
+          className="flex items-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-semibold transition-all border border-outline-variant/60 shrink-0"
           type="button"
           title="Install on iPhone / iPad"
+          aria-label="Install on iOS"
         >
           <span className="material-symbols-outlined text-[16px] text-primary">phone_iphone</span>
-          <span>Install on iOS</span>
+          <span className="hidden sm:inline">Install on iOS</span>
         </button>
 
         {showIOSGuide && (

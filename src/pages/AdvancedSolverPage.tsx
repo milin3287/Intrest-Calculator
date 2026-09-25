@@ -124,33 +124,33 @@ export const AdvancedSolverPage: React.FC = () => {
               <span className="material-symbols-outlined text-[16px]">psychology</span>
               <span>Symbolic &amp; Quantitative Engine v4.2</span>
             </div>
-            <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold mb-space-xs">
+            <h1 className="text-2xl sm:text-3xl lg:text-headline-lg text-on-surface tracking-tight font-extrabold mb-space-xs">
               Solve Complex Interest Problems
             </h1>
-            <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+            <p className="font-body-lg text-sm sm:text-base text-on-surface-variant max-w-2xl">
               Enter your equation, specify variables, or describe a financial word problem for instant step-by-step mathematical solutions.
             </p>
           </div>
 
           {/* Engine Status Matrix Badge */}
-          <div className="flex items-center gap-space-md p-space-sm bg-surface-container-lowest rounded-xl shadow-sm shrink-0 border border-surface-container-high/60">
-            <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+          <div className="flex items-center gap-space-md p-space-sm bg-surface-container-lowest rounded-xl shadow-sm shrink-0 border border-surface-container-high/60 w-fit">
+            <div className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-primary shrink-0">
               <span className="material-symbols-outlined text-[24px]">terminal</span>
             </div>
             <div>
               <div className="flex items-center gap-space-xs">
                 <span className="w-2 h-2 rounded-full bg-primary animate-ping"></span>
-                <span className="font-label-sm text-label-sm uppercase text-on-surface font-semibold">
+                <span className="font-label-sm text-xs sm:text-label-sm uppercase text-on-surface font-semibold">
                   Parser Active
                 </span>
               </div>
-              <span className="font-body-sm text-body-sm text-secondary">LaTeX + Real Yield Solvers Ready</span>
+              <span className="font-body-sm text-[11px] sm:text-xs text-secondary">LaTeX + Real Yield Solvers Ready</span>
             </div>
           </div>
         </div>
 
-        {/* Input Mode Switcher */}
-        <div className="mt-space-xl pt-space-md flex flex-wrap items-center gap-space-xs border-t border-surface-container-high/40">
+        {/* Input Mode Switcher (Scrollable on mobile) */}
+        <div className="mt-space-lg sm:mt-space-xl pt-space-md flex items-center gap-1.5 border-t border-surface-container-high/40 overflow-x-auto no-scrollbar pb-0.5">
           {(['Formula', 'Equation', 'Problem'] as const).map(mode => {
             const isSelected = activeMode === mode;
             return (
@@ -158,17 +158,17 @@ export const AdvancedSolverPage: React.FC = () => {
                 key={mode}
                 onClick={() => setActiveMode(mode)}
                 type="button"
-                className={`relative inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-xl font-label-md text-label-md transition-all ${
+                className={`relative inline-flex items-center gap-1.5 px-3 py-2 sm:px-space-md sm:py-space-xs rounded-xl font-label-md text-xs sm:text-sm transition-all whitespace-nowrap shrink-0 min-h-[40px] ${
                   isSelected
-                    ? 'bg-surface-container-lowest text-primary font-semibold shadow-sm border border-surface-container-high/60'
+                    ? 'bg-surface-container-lowest text-primary font-bold shadow-sm border border-surface-container-high/60'
                     : 'text-secondary hover:text-on-surface hover:bg-surface-container'
                 }`}
               >
                 {mode === 'Problem' && <span className="material-symbols-outlined text-[18px]">auto_awesome</span>}
                 <span>{mode} Mode</span>
                 {mode === 'Problem' && (
-                  <span className="px-space-xs py-space-2xs rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold tracking-normal">
-                    Natural Language AI Parser
+                  <span className="hidden sm:inline px-space-xs py-space-2xs rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-semibold tracking-normal">
+                    AI Parser
                   </span>
                 )}
               </button>

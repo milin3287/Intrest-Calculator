@@ -746,17 +746,17 @@ export const CalculatorsPage: React.FC = () => {
             </div>
 
             {/* Big Hero Visual Result */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low p-space-lg rounded-xl border border-surface-container-high/50">
-              <div className="flex flex-col gap-1">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md bg-gradient-to-r from-surface-container-low via-surface-container to-surface-container-low p-space-md sm:p-space-lg rounded-xl border border-surface-container-high/50">
+              <div className="flex flex-col gap-1 min-w-0">
                 <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold">
                   Total Accumulated Corpus
                 </span>
-                <div className="flex items-baseline gap-space-xs">
-                  <span className="font-display-xl text-display-xl text-primary font-bold tracking-tight">
+                <div className="flex items-baseline gap-space-xs overflow-hidden flex-wrap">
+                  <span className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-primary font-extrabold tracking-tight break-words">
                     {formatMoney(totalCorpus, 2)}
                   </span>
                 </div>
-                <p className="font-body-sm text-body-sm text-secondary">
+                <p className="font-body-sm text-xs sm:text-sm text-secondary">
                   {tenureYears > 0
                     ? `Estimated maturity value after ${tenureYears}.0 years with reinvested yields`
                     : 'Enter principal, rate, and tenure to calculate maturity corpus'}
