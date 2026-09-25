@@ -2,7 +2,14 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 
 export const FormulaDrawer: React.FC = () => {
-  const { formulaDrawerOpen, toggleFormulaDrawer, triggerToast, navigateTo, setActiveCalculatorTab } = useApp();
+  const {
+    formulaDrawerOpen,
+    toggleFormulaDrawer,
+    triggerToast,
+    navigateTo,
+    setActiveCalculatorTab,
+    setActiveInvestmentType,
+  } = useApp();
 
   const applyFormula = (name: string, calcTab: string) => {
     toggleFormulaDrawer();
@@ -154,6 +161,32 @@ export const FormulaDrawer: React.FC = () => {
             </code>
             <span className="text-secondary font-body-sm text-body-sm">
               P = monthly investment installment, i = periodic rate, n = number of periods.
+            </span>
+          </div>
+
+          {/* Systematic Withdrawal Plan (SWP) */}
+          <div className="bg-surface-container-low p-space-sm rounded-lg flex flex-col gap-1 border border-surface-container-high/40">
+            <div className="flex items-center justify-between">
+              <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-semibold">
+                Systematic Withdrawal Plan (SWP)
+              </span>
+              <button
+                onClick={() => {
+                  toggleFormulaDrawer();
+                  setActiveInvestmentType('SWP');
+                  navigateTo('investment');
+                  triggerToast('Opened SWP (Withdrawal) Calculator.');
+                }}
+                className="text-xs text-primary hover:underline font-semibold flex items-center gap-0.5"
+              >
+                Open SWP &rarr;
+              </button>
+            </div>
+            <code className="font-data-mono-md text-on-surface bg-surface-container-lowest p-2 rounded border border-surface-container-high/60">
+              B_n = P(1+i)ⁿ - W × [((1+i)ⁿ - 1)/i]
+            </code>
+            <span className="text-secondary font-body-sm text-body-sm">
+              P = initial corpus, W = periodic payout, i = periodic rate, B_n = remaining corpus balance.
             </span>
           </div>
 

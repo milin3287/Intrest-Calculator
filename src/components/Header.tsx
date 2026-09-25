@@ -87,10 +87,11 @@ export const Header: React.FC = () => {
       badge: 'Save ₹',
     },
     {
-      label: 'Investment SIP & Lumpsum',
-      description: 'Wealth growth & inflation-adjusted returns',
+      label: 'Investment SIP & SWP',
+      description: 'Wealth growth, systematic withdrawals & compounding',
       path: 'investment',
       icon: 'trending_up',
+      badge: 'SIP/SWP',
     },
     {
       label: 'All Calculators',

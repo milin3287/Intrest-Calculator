@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { PagePath, CurrencyCode, CurrencyConfig, CalculationAuditItem } from '../types';
+import { PagePath, CurrencyCode, CurrencyConfig, CalculationAuditItem, InvestmentMode } from '../types';
 import { saveRecord, getAllRecords, deleteRecord } from '../services/firebaseSync';
 
 export const CURRENCIES: Record<CurrencyCode, CurrencyConfig> = {
@@ -31,6 +31,8 @@ interface AppContextType {
   setActiveCalculatorTab: (tab: string) => void;
   formulaDrawerOpen: boolean;
   toggleFormulaDrawer: () => void;
+  activeInvestmentType: InvestmentMode;
+  setActiveInvestmentType: (type: InvestmentMode) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -76,6 +78,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [activeCalculatorTab, setActiveCalculatorTab] = useState<string>('Compound Interest');
+  const [activeInvestmentType, setActiveInvestmentType] = useState<InvestmentMode>('SIP');
   const [formulaDrawerOpen, setFormulaDrawerOpen] = useState<boolean>(false);
 
   // Sync calculations from Firestore table on initial load
@@ -256,6 +259,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveCalculatorTab,
         formulaDrawerOpen,
         toggleFormulaDrawer,
+        activeInvestmentType,
+        setActiveInvestmentType,
       }}
     >
       {children}

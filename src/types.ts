@@ -14,6 +14,8 @@ export type PagePath = (typeof PagePath)[keyof typeof PagePath];
 
 export type CurrencyCode = 'INR' | 'USD' | 'EUR' | 'GBP';
 
+export type InvestmentMode = 'SIP' | 'SWP' | 'Lumpsum' | 'Goal';
+
 export interface CurrencyConfig {
   code: CurrencyCode;
   symbol: string;

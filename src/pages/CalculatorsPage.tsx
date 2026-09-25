@@ -13,6 +13,7 @@ export const CalculatorsPage: React.FC = () => {
     triggerToast,
     addHistoryItem,
     navigateTo,
+    setActiveInvestmentType,
   } = useApp();
 
   // Primary Workspace Parameters
@@ -190,9 +191,10 @@ export const CalculatorsPage: React.FC = () => {
     'Custom Dates Ledger',
     'Loan EMI',
     'Investment Growth',
+    'SIP & Recurring',
+    'SWP (Withdrawal)',
     'Present Value',
     'Future Value',
-    'SIP & Recurring',
   ];
 
   return (
@@ -252,6 +254,22 @@ export const CalculatorsPage: React.FC = () => {
                 onClick={() => {
                   if (tab === 'Custom Dates Ledger') {
                     navigateTo('date-ledger');
+                    return;
+                  }
+                  if (tab === 'Loan EMI') {
+                    navigateTo('loan-and-emi');
+                    return;
+                  }
+                  if (tab === 'SWP (Withdrawal)') {
+                    setActiveInvestmentType('SWP');
+                    navigateTo('investment');
+                    triggerToast('Opened Systematic Withdrawal Plan (SWP) Calculator.');
+                    return;
+                  }
+                  if (tab === 'Investment Growth' || tab === 'SIP & Recurring') {
+                    setActiveInvestmentType('SIP');
+                    navigateTo('investment');
+                    triggerToast('Opened Systematic Investment Plan (SIP) Calculator.');
                     return;
                   }
                   setActiveCalculatorTab(tab);
